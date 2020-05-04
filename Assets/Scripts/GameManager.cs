@@ -43,35 +43,29 @@ public class GameManager : MonoBehaviour
             }
 
             float maxColor = Math.Max(Math.Max(pix[i].r, pix[i].g), pix[i].b);
-            float yOffset;
+            float yOffset = maxColor*50;
 
             if (maxColor <= 0)
             {
-                yOffset = 0f;
                 InstantiatePrefab("WaterTile", xOffset, yOffset, zOffset);
             } else if(maxColor > 0 && maxColor <= 0.2)
             {
-                yOffset = UnityEngine.Random.Range(0.01f, 2.5f);
                 InstantiatePrefab("SandTile", xOffset, yOffset, zOffset);
             }
             else if (maxColor > 0.2 && maxColor <= 0.4)
             {
-                yOffset = UnityEngine.Random.Range(3.5f, 7f);
                 InstantiatePrefab("GrassTile", xOffset, yOffset, zOffset);
             }
             else if (maxColor > 0.4 && maxColor <= 0.6)
             {
-                yOffset = UnityEngine.Random.Range(8f, 12f);
                 InstantiatePrefab("ForestTile", xOffset, yOffset, zOffset);
             }
             else if (maxColor > 0.6 && maxColor <= 0.8)
             {
-                yOffset = UnityEngine.Random.Range(10f, 16f);
                 InstantiatePrefab("StoneTile", xOffset, yOffset, zOffset);
             }
             else if (maxColor > 0.8)
             {
-                yOffset = UnityEngine.Random.Range(18f, 20f);
                 InstantiatePrefab("MountainTile", xOffset, yOffset, zOffset);
             }
 
