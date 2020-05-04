@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public Texture2D sourceTex;
     public Rect sourceRect;
-
+    int mapSize;
     void Start()
     {
         AdaptMapSize();
@@ -24,7 +24,13 @@ public class GameManager : MonoBehaviour
         sourceRect.width = mapSize;
         sourceRect.height = mapSize;
     }
+    public int GetMapSize()
+    {
 
+        string[] heightMapName = sourceTex.name.Split('_');
+        mapSize = Int32.Parse(heightMapName[1]);
+        return mapSize;
+    }
     void BuildMap()
     {
         Color[] pix = GetPixels();
