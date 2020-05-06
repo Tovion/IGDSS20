@@ -4,32 +4,18 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public Texture2D sourceTex;
-    public Rect sourceRect;
-    int mapSize;
+    public Texture2D mapTexture;
+
     void Start()
     {
-        AdaptMapSize();
         BuildMap();
     }
 
-    /**
-     *  Sets the size of the map rectangle to the number from the filename
-     *  e.g. Heighmap_16 so the size (width / height) will be 16px
-     */
-    void AdaptMapSize()
-    {
-        string[] heightMapName = sourceTex.name.Split('_');
-        int mapSize = Int32.Parse(heightMapName[1]);
-        sourceRect.width = mapSize;
-        sourceRect.height = mapSize;
-    }
     public int GetMapSize()
     {
-        string[] heightMapName = sourceTex.name.Split('_');
-        mapSize = Int32.Parse(heightMapName[1]);
-        return mapSize;
+        return mapTexture.width;
     }
+    
     void BuildMap()
     {
         Color[] pix = GetPixels();
@@ -40,7 +26,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < pix.Length; i++)
         {
-            if (i != 0 && i % (int) sourceRect.width == 0)
+            if (i != 0 && i % (int) mapTexture.width == 0)
             {
                 xOffset += 8.5f;
                 zOffset = counter % 2 == 0 ? 5f : 0f;
@@ -79,12 +65,12 @@ public class GameManager : MonoBehaviour
 
         Color[] GetPixels()
         {
-            int x = Mathf.FloorToInt(sourceRect.x);
-            int y = Mathf.FloorToInt(sourceRect.y);
-            int width = Mathf.FloorToInt(sourceRect.width);
-            int height = Mathf.FloorToInt(sourceRect.height);
+            int x = Mathf.FloorToInt(0);
+            int y = Mathf.FloorToInt(0);
+            int width = Mathf.FloorToInt(mapTexture.width);
+            int height = Mathf.FloorToInt(mapTexture.height);
 
-            return sourceTex.GetPixels(x, y, width, height);
+            return mapTexture.GetPixels(x, y, width, height);
         }
 
         void InstantiatePrefab(String prefabName, float xPos, float yPos, float zPos)

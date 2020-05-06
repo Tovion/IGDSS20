@@ -1,11 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MouseManager : MonoBehaviour
 {
-    public Camera maincamera;
     public GameManager gameManager;
-    bool rightmousedown = false;
+    bool rightMouseClickHold = false;
     private Vector3 vector3;
     int mapSize;
     int yPos;
@@ -26,12 +24,10 @@ public class MouseManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out var hit))
             {
                 if (hit.collider.gameObject.layer == 8)
                 {
-
                     Debug.Log(hit.collider.gameObject.name);
                 }
             }
@@ -42,16 +38,15 @@ public class MouseManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            rightmousedown = true;
+            rightMouseClickHold = true;
         }
         if (Input.GetMouseButtonUp(1))
         {
-
-            rightmousedown = false;
+            rightMouseClickHold = false;
         }
-        if (rightmousedown)
+        if (rightMouseClickHold)
         {
-            Debug.Log(Input.mousePosition);
+            //Debug.Log(Input.mousePosition);
             int xPos = (int)(-1 * Input.mousePosition.y + 500);
             int zPos = (int)Input.mousePosition.x;
             if (xPos > mapSize)
@@ -70,7 +65,7 @@ public class MouseManager : MonoBehaviour
             {
                 zPos = 0;
             }
-            maincamera.transform.SetPositionAndRotation(new Vector3(xPos, yPos, zPos), Quaternion.Euler(new Vector3(45, -90, 0)));
+            Camera.main.transform.SetPositionAndRotation(new Vector3(xPos, yPos, zPos), Quaternion.Euler(new Vector3(45, -90, 0)));
         }
     }
 
@@ -87,7 +82,7 @@ public class MouseManager : MonoBehaviour
             {
                 yPosMov = -5;
             }
-            int camY = (int)maincamera.transform.position.y;
+            int camY = (int) Camera.main.transform.position.y;
             if (camY > 100)
             {
                 if (Input.GetAxis("Mouse ScrollWheel") < 0)
@@ -111,7 +106,7 @@ public class MouseManager : MonoBehaviour
                 }
             }
             yPos = camY;
-            maincamera.transform.Translate(new Vector3(0, yPosMov, 0));
+            Camera.main.transform.Translate(new Vector3(0, yPosMov, 0));
         }
     }
 }
