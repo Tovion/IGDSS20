@@ -5,7 +5,6 @@ public class MouseManager : MonoBehaviour
 {
     public Camera maincamera;
     public GameManager gameManager;
-    // Update is called once per frame
     bool rightmousedown = false;
     private Vector3 vector3;
     int mapSize;
@@ -16,6 +15,30 @@ public class MouseManager : MonoBehaviour
          yPos = 75;
     }
     void Update()
+    {
+        LeftMouseClick();
+        RightMouseClick();
+        ScrollWheel();
+    }
+
+    private void LeftMouseClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject.layer == 8)
+                {
+
+                    Debug.Log(hit.collider.gameObject.name);
+                }
+            }
+        }
+    }
+
+    private void RightMouseClick()
     {
         if (Input.GetMouseButtonDown(1))
         {
@@ -29,9 +52,9 @@ public class MouseManager : MonoBehaviour
         if (rightmousedown)
         {
             Debug.Log(Input.mousePosition);
-            int xPos = (int)(-1*Input.mousePosition.y +500);
-            int zPos = (int) Input.mousePosition.x;
-            if(xPos > mapSize)
+            int xPos = (int)(-1 * Input.mousePosition.y + 500);
+            int zPos = (int)Input.mousePosition.x;
+            if (xPos > mapSize)
             {
                 xPos = mapSize;
             }
@@ -47,10 +70,13 @@ public class MouseManager : MonoBehaviour
             {
                 zPos = 0;
             }
-            maincamera.transform.SetPositionAndRotation(new Vector3(xPos, yPos, zPos),Quaternion.Euler(new Vector3(45,-90,0)));
-
+            maincamera.transform.SetPositionAndRotation(new Vector3(xPos, yPos, zPos), Quaternion.Euler(new Vector3(45, -90, 0)));
         }
-        if(Input.GetAxis("Mouse ScrollWheel") != 0)
+    }
+
+    private void ScrollWheel()
+    {
+        if (Input.GetAxis("Mouse ScrollWheel") != 0)
         {
             int yPosMov;
             if (Input.GetAxis("Mouse ScrollWheel") < 0)
@@ -87,19 +113,5 @@ public class MouseManager : MonoBehaviour
             yPos = camY;
             maincamera.transform.Translate(new Vector3(0, yPosMov, 0));
         }
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.collider.gameObject.layer == 8)
-                {
-
-                    Debug.Log(hit.collider.gameObject.name);
-                }
-            }
-        }
     }
-   
 }

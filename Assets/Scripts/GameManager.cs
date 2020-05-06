@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour
     }
     public int GetMapSize()
     {
-
         string[] heightMapName = sourceTex.name.Split('_');
         mapSize = Int32.Parse(heightMapName[1]);
         return mapSize;
