@@ -44,10 +44,12 @@ public class MouseManager : MonoBehaviour
         {
             rightMouseClickHold = true;
         }
+
         if (Input.GetMouseButtonUp(1))
         {
             rightMouseClickHold = false;
         }
+
         if (rightMouseClickHold)
         {
             //Debug.Log(Input.mousePosition);
@@ -88,5 +90,4 @@ public class MouseManager : MonoBehaviour
             cam.transform.Translate(new Vector3(0, 0, 10));
         } 
     }
-
 }
