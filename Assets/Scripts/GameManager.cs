@@ -36,8 +36,6 @@ public class GameManager : MonoBehaviour
 
             PlacePrefab(maxColor, xOffset, yOffset, zOffset);
             zOffset += 10;
-
-
         }
     }
 
