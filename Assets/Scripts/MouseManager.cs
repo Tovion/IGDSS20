@@ -3,27 +3,30 @@
 public class MouseManager : MonoBehaviour
 {
     public GameManager gameManager;
-    bool rightMouseClickHold = false;
-    private Vector3 vector3;
-    int mapSize;
-    int yPos;
+
+    private Camera cam;
+    private int mapSize;
+    private bool rightMouseClickHold;
+
     private void Start()
-    {
-         mapSize =10* gameManager.GetMapSize();
-         yPos = 75;
+    { 
+        cam = Camera.main;
+        mapSize = 10 * gameManager.GetMapSize();
+        rightMouseClickHold = false;
     }
     void Update()
     {
-        LeftMouseClick();
-        RightMouseClick();
-        ScrollWheel();
+        ClickOnPrefab();
+        CameraMovement();
+        CameraScrollWheel();
     }
 
-    private void LeftMouseClick()
+    // left mouse click
+    private void ClickOnPrefab()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out var hit))
             {
                 if (hit.collider.gameObject.layer == 8)
@@ -34,7 +37,8 @@ public class MouseManager : MonoBehaviour
         }
     }
 
-    private void RightMouseClick()
+    // hold right mouse click 
+    private void CameraMovement()
     {
         if (Input.GetMouseButtonDown(1))
         {
@@ -47,66 +51,42 @@ public class MouseManager : MonoBehaviour
         if (rightMouseClickHold)
         {
             //Debug.Log(Input.mousePosition);
-            int xPos = (int)(-1 * Input.mousePosition.y + 500);
-            int zPos = (int)Input.mousePosition.x;
-            if (xPos > mapSize)
-            {
-                xPos = mapSize;
-            }
-            if (xPos < 00)
-            {
-                xPos = 00;
-            }
-            if (zPos > mapSize)
-            {
-                zPos = mapSize;
-            }
-            if (zPos < 0)
-            {
-                zPos = 0;
-            }
-            Camera.main.transform.SetPositionAndRotation(new Vector3(xPos, yPos, zPos), Quaternion.Euler(new Vector3(45, -90, 0)));
+            var xPos = (int)(-1 * Input.mousePosition.y + 500);
+            var zPos = (int)Input.mousePosition.x;
+         
+            // right boundary
+            if (xPos > mapSize) { xPos = mapSize; }
+
+            // left boundary
+            if (xPos < 0) { xPos = 0; }             
+
+            // up boundary
+            if (zPos > mapSize) { zPos = mapSize; } 
+
+            // bottom boundary
+            if (zPos < 0) { zPos = 0; }            
+            
+            cam.transform.SetPositionAndRotation(
+                new Vector3(xPos, cam.transform.position.y, zPos), 
+                Quaternion.Euler(new Vector3(60, -90, 0)));
         }
     }
 
-    private void ScrollWheel()
+    private void CameraScrollWheel()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        const float MAX_ZOOM_IN = 50f;
+        const float MAX_ZOOM_OUT = 120f;
+        var yPos = cam.transform.position.y;
+        
+        if (yPos < MAX_ZOOM_OUT && Input.GetAxis("Mouse ScrollWheel") < 0f) // zoom in
         {
-            int yPosMov;
-            if (Input.GetAxis("Mouse ScrollWheel") < 0)
-            {
-                yPosMov = 5;
-            }
-            else
-            {
-                yPosMov = -5;
-            }
-            int camY = (int) Camera.main.transform.position.y;
-            if (camY > 100)
-            {
-                if (Input.GetAxis("Mouse ScrollWheel") < 0)
-                {
-                    yPosMov = 0;
-                }
-                else
-                {
-                    yPosMov = -5;
-                }
-            }
-            if (camY < 55)
-            {
-                if (Input.GetAxis("Mouse ScrollWheel") < 0)
-                {
-                    yPosMov = 5;
-                }
-                else
-                {
-                    yPosMov = 0;
-                }
-            }
-            yPos = camY;
-            Camera.main.transform.Translate(new Vector3(0, yPosMov, 0));
-        }
+            cam.transform.Translate(new Vector3(0, 0, -10));
+        } 
+
+        if (yPos > MAX_ZOOM_IN && Input.GetAxis("Mouse ScrollWheel") > 0f) // zoom out
+        {
+            cam.transform.Translate(new Vector3(0, 0, 10));
+        } 
     }
+
 }
