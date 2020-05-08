@@ -19,21 +19,25 @@ public class GameManager : MonoBehaviour
         var zOffset = 0f;
         var counter = 0;
 
-        for (var i = 1; i < pix.Length; i++)
+        for (var i = 0; i < pix.Length; i++)
         {
-            // maxColor is the highest RGB value of a pixel [0;1]
-            var maxColor = Math.Max(Math.Max(pix[i].r, pix[i].g), pix[i].b);
-            var yOffset = maxColor * 50; // adapt the prefab height
-
-            PlacePrefab(maxColor, xOffset, yOffset, zOffset);
-            zOffset += 10;
-
             if (NextRow(i))
             {
                 xOffset += 8.5f;
                 zOffset = counter % 2 == 0 ? 5f : 0f;
                 counter++;
             }
+
+            // maxColor is the highest RGB value of a pixel [0;1]
+            var maxColor = Math.Max(Math.Max(pix[i].r, pix[i].g), pix[i].b);
+
+            // adapt the prefab height
+            var yOffset = maxColor * 50; 
+
+            PlacePrefab(maxColor, xOffset, yOffset, zOffset);
+            zOffset += 10;
+
+
         }
     }
 
@@ -83,7 +87,7 @@ public class GameManager : MonoBehaviour
 
     private bool NextRow(int pixelIndex)
     {
-        return (pixelIndex % (int) mapTexture.width) == 0;
+        return (pixelIndex != 0) && (pixelIndex % (int) mapTexture.width) == 0;
     }
 
 
