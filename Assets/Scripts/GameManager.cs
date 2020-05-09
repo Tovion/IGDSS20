@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
                 counter++;
             }
 
-            // maxColor is the highest RGB value of a pixel [0;1]
+            // maxColor is the maximum RGB value of a pixel [0;1]
             var maxColor = Math.Max(Math.Max(pix[i].r, pix[i].g), pix[i].b);
 
             // adapt the prefab height

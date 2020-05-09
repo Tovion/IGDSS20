@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 public class MouseManager : MonoBehaviour
 {
@@ -7,6 +9,14 @@ public class MouseManager : MonoBehaviour
     private Camera cam;
     private int mapSize;
     private bool rightMouseClickHold;
+
+    // for mouse movement
+    private const float MOVE_SPEED = 0.05f;
+    private Vector3 currentMousePosition;
+    private float xPos;
+    private float yPos;
+    private float zPos;
+  
 
     private void Start()
     { 
@@ -43,6 +53,10 @@ public class MouseManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             rightMouseClickHold = true;
+            currentMousePosition = Input.mousePosition; // store the mouse pos. for each right click
+            xPos = cam.transform.position.x;
+            yPos = cam.transform.position.y;
+            zPos = cam.transform.position.z;
         }
 
         if (Input.GetMouseButtonUp(1))
@@ -52,26 +66,34 @@ public class MouseManager : MonoBehaviour
 
         if (rightMouseClickHold)
         {
-            //Debug.Log(Input.mousePosition);
-            var xPos = (int)(-1 * Input.mousePosition.y + 500);
-            var zPos = (int)Input.mousePosition.x;
-         
-            // right boundary
-            if (xPos > mapSize) { xPos = mapSize; }
-
-            // left boundary
-            if (xPos < 0) { xPos = 0; }             
-
-            // up boundary
-            if (zPos > mapSize) { zPos = mapSize; } 
-
-            // bottom boundary
-            if (zPos < 0) { zPos = 0; }            
-            
-            cam.transform.SetPositionAndRotation(
-                new Vector3(xPos, cam.transform.position.y, zPos), 
-                Quaternion.Euler(new Vector3(60, -90, 0)));
+            MoveCamera();
         }
+    }
+
+    void MoveCamera()
+    {
+        float xOffset= ((currentMousePosition.x - Input.mousePosition.x) * -1) * MOVE_SPEED;
+        float yOffset = (currentMousePosition.y - Input.mousePosition.y) * MOVE_SPEED;
+
+        // also possible with Time.deltaTime but it needs more fine-tuning;
+        //float xFactor = ((currentMousePosition.x - Input.mousePosition.x) * -1) * Time.deltaTime * 2f;
+        //float yFactor = (currentMousePosition.y - Input.mousePosition.y) * Time.deltaTime * 2f;
+
+        // right boundary
+        if (xPos > mapSize) { xPos = mapSize; }
+
+        // left boundary
+        if (xPos < 0) { xPos = 0; }
+
+        // up boundary
+        if (zPos > mapSize) { zPos = mapSize; }
+
+        // bottom boundary
+        if (zPos < 0) { zPos = 0; }
+
+        cam.transform.SetPositionAndRotation(
+            new Vector3(xPos += yOffset, yPos, zPos += xOffset),
+            Quaternion.Euler(new Vector3(60, -90, 0)));
     }
 
     private void CameraScrollWheel()
@@ -90,4 +112,5 @@ public class MouseManager : MonoBehaviour
             cam.transform.Translate(new Vector3(0, 0, 10));
         } 
     }
+
 }
