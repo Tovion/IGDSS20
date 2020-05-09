@@ -550,7 +550,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1768092941}
-  yPosMov: 0
 --- !u!4 &834136087
 Transform:
   m_ObjectHideFlags: 0

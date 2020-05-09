@@ -16,8 +16,7 @@ public class MouseManager : MonoBehaviour
     private float xPos;
     private float yPos;
     private float zPos;
-  
-
+    
     private void Start()
     { 
         cam = Camera.main;
