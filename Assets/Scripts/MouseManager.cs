@@ -84,16 +84,16 @@ public class MouseManager : MonoBehaviour
     {
         const float MAX_ZOOM_IN = 60f;
         const float MAX_ZOOM_OUT = 120f;
-        var yPos = cam.transform.position.y;
-        
-        if (yPos < MAX_ZOOM_OUT && Input.GetAxis("Mouse ScrollWheel") < 0f) // zoom in
-        {
-            cam.transform.Translate(new Vector3(0, 0, -10 * Time.deltaTime * 20f));
-        } 
+        var yCamPos = cam.transform.position.y;
 
-        if (yPos > MAX_ZOOM_IN && Input.GetAxis("Mouse ScrollWheel") > 0f) // zoom out
-        {
-            cam.transform.Translate(new Vector3(0, 0, 10 * Time.deltaTime * 20f));
-        } 
+       if (yCamPos < MAX_ZOOM_OUT && Input.GetAxis("Mouse ScrollWheel") < 0f) // zoom out
+       {
+           cam.transform.Translate(new Vector3(0, 0, -10 * Time.deltaTime * 20f));
+       } 
+       
+       if (yCamPos > MAX_ZOOM_IN && Input.GetAxis("Mouse ScrollWheel") > 0f) // zoom in
+       {
+           cam.transform.Translate(new Vector3(0, 0, 10 * Time.deltaTime * 20f));
+       }
     }
 }
