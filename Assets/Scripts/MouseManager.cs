@@ -75,7 +75,7 @@ public class MouseManager : MonoBehaviour
 
     private void MoveCamera()
     {
-        var xOffset = (cachedMousePosition.x - Input.mousePosition.x) * Time.deltaTime * MOVE_SPEED * (-1) ;
+        var xOffset = (cachedMousePosition.x - Input.mousePosition.x) * Time.deltaTime * MOVE_SPEED * (-1);
         var yOffset = (cachedMousePosition.y - Input.mousePosition.y) * Time.deltaTime * MOVE_SPEED;
 
         // change to xCamPos + yOffset and zCamPos + xOffset to disable auto movement
