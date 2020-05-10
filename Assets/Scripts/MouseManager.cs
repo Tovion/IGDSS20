@@ -4,6 +4,7 @@ public class MouseManager : MonoBehaviour
 {
     public GameManager gameManager;
 
+    private const int TILE_LAYER = 8;
     private Camera cam;
     private int mapSize;
     private bool rightMouseClickHold;
@@ -14,11 +15,20 @@ public class MouseManager : MonoBehaviour
     private Vector3 cachedCameraPosition;
 
     private void Start()
-    { 
-        cam = Camera.main;
+    {
+        InitCamera();
         mapSize = 10 * gameManager.GetMapSize();
         rightMouseClickHold = false;
     }
+
+    private void InitCamera()
+    {
+        cam = Camera.main;
+        cam.transform.SetPositionAndRotation(
+            new Vector3(150f, 100f, 80f), 
+            Quaternion.Euler(new Vector3(60f, -90f, 0f)));
+    }
+
     void Update()
     {
         ClickOnPrefab();
@@ -34,7 +44,7 @@ public class MouseManager : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out var hit))
             {
-                if (hit.collider.gameObject.layer == 8)
+                if (hit.collider.gameObject.layer == TILE_LAYER)
                 {
                     Debug.Log(hit.collider.gameObject.name);
                 }
@@ -63,9 +73,9 @@ public class MouseManager : MonoBehaviour
         }
     }
 
-    void MoveCamera()
+    private void MoveCamera()
     {
-        var xOffset = (cachedMousePosition.x - Input.mousePosition.x) * -1 * Time.deltaTime * MOVE_SPEED;
+        var xOffset = (cachedMousePosition.x - Input.mousePosition.x) * Time.deltaTime * MOVE_SPEED * (-1) ;
         var yOffset = (cachedMousePosition.y - Input.mousePosition.y) * Time.deltaTime * MOVE_SPEED;
 
         // change to xCamPos + yOffset and zCamPos + xOffset to disable auto movement
@@ -76,8 +86,7 @@ public class MouseManager : MonoBehaviour
         newZPos = Mathf.Clamp(newZPos, 0, mapSize);
 
         cam.transform.SetPositionAndRotation(
-            new Vector3(newXPos, cachedCameraPosition.y, newZPos),
-            Quaternion.Euler(new Vector3(60, -90, 0)));
+            new Vector3(newXPos, cachedCameraPosition.y, newZPos), cam.transform.rotation);
     }
 
     private void CameraScrollWheel()
