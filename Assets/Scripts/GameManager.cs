@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 public class GameManager : MonoBehaviour
 {
