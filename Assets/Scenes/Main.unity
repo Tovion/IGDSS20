@@ -990,6 +990,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapTexture: {fileID: 2800000, guid: 6c8b8b5dee9104b429f737ec1d927ec9, type: 3}
+  currentMoney: 500
+  _buildingPrefabs:
+  - {fileID: 1818089961569851303, guid: a6e8ead8d55769542b823132b1274f39, type: 3}
+  _selectedBuildingPrefabIndex: 0
+  buildings: []
+  _ResourcesInWarehouse_Fish: 0
+  _ResourcesInWarehouse_Wood: 7
+  _ResourcesInWarehouse_Planks: 0
+  _ResourcesInWarehouse_Wool: 0
+  _ResourcesInWarehouse_Clothes: 0
+  _ResourcesInWarehouse_Potato: 0
+  _ResourcesInWarehouse_Schnapps: 0
 --- !u!4 &1768092942
 Transform:
   m_ObjectHideFlags: 0

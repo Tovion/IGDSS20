@@ -8,6 +8,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public Texture2D mapTexture;
+    float timer;
+    public int currentMoney;
 
     #region Map generation
     private Tile[,] _tileMap = new Tile[16,16]; //2D array of all spawned tiles
@@ -38,10 +40,13 @@ public class GameManager : MonoBehaviour
 
 
             Tile tile= PlacePrefab(maxColor, xOffset, yOffset, zOffset);
-            zOffset += 10;
             tile._coordinateHeight = i % mapsize;
+            tile.x = xOffset;
+            tile.y = yOffset;
+            tile.z = zOffset;
             tile._coordinateWidth =counter;
             _tileMap[counter, i % mapsize] = tile;
+            zOffset += 10;
         }
         for (var i = 0; i< mapsize; i++)
         {
@@ -113,8 +118,9 @@ public class GameManager : MonoBehaviour
 
 
     #region Buildings
-    public GameObject[] _buildingPrefabs; //References to the building prefabs
+    public Building[] _buildingPrefabs; //References to the building prefabs
     public int _selectedBuildingPrefabIndex = 0; //The current index used for choosing a prefab to spawn from the _buildingPrefabs list
+    public List<Building> buildings;
     #endregion
 
 
@@ -155,6 +161,24 @@ public class GameManager : MonoBehaviour
     {
         HandleKeyboardInput();
         UpdateInspectorNumbersForResources();
+        Upkeep();
+    }
+
+    private void Upkeep()
+    {
+        timer += Time.deltaTime;
+        float waitTime = 60.0f;
+        if (timer > waitTime)
+        {
+            int overallUpkeep = 100;
+            foreach(Building b in buildings)
+            {
+                overallUpkeep -= b.upkeep;
+            }
+            currentMoney += overallUpkeep;
+            timer -= waitTime;
+
+        }
     }
     #endregion
 
@@ -171,7 +195,10 @@ public class GameManager : MonoBehaviour
         _resourcesInWarehouse.Add(ResourceTypes.Potato, 0);
         _resourcesInWarehouse.Add(ResourceTypes.Schnapps, 0);
     }
-
+    public void ChangeResourcesInWarehouse(ResourceTypes resource, int changingNumber)
+    {
+        _resourcesInWarehouse[resource] += changingNumber; 
+    }
     //Sets the index for the currently selected building prefab by checking key presses on the numbers 1 to 0
     void HandleKeyboardInput()
     {
@@ -239,7 +266,9 @@ public class GameManager : MonoBehaviour
     //Forwards the tile to the method for spawning buildings
     public void TileClicked(int height, int width)
     {
+       
         Tile t = _tileMap[height, width];
+        Debug.Log("width: " + width + " height:" + height);
 
         PlaceBuildingOnTile(t);
     }
@@ -250,8 +279,25 @@ public class GameManager : MonoBehaviour
         //if there is building prefab for the number input
         if (_selectedBuildingPrefabIndex < _buildingPrefabs.Length)
         {
-            //TODO: check if building can be placed and then istantiate it
+            Building building = _buildingPrefabs[_selectedBuildingPrefabIndex];
+                      if(building.canBeBuiltOnTileTypes.Contains(t._type) && building.buildCostMoney <= currentMoney && building.buildCostPlanks <= _resourcesInWarehouse[ResourceTypes.Planks])
+            {
+                currentMoney -= building.buildCostMoney;
+                ChangeResourcesInWarehouse(ResourceTypes.Planks, -building.buildCostPlanks);
 
+                building.tile = t;
+                building.calculateOutputResource();
+                building.CalculateEfficency();
+                building.gameManager = this;
+                Instantiate(
+                    (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + building.type + ".prefab", typeof(GameObject)),
+                     new Vector3(t.x, t.y, t.z), Quaternion.identity);
+
+                buildings.Add(building);
+                
+            }
+
+            //TODO: check if building can be placed and then istantiate it
         }
     }
 
@@ -273,7 +319,6 @@ public class GameManager : MonoBehaviour
         }
         if (height + 1 < limit)
         {
-            Debug.Log("height:" + height + "limit :" + limit);
             result.Add(_tileMap[width, height+1]);
         }
         if (height - 1 > 0)

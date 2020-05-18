@@ -47,6 +47,20 @@ public class MouseManager : MonoBehaviour
                 if (hit.collider.gameObject.layer == TILE_LAYER)
                 {
                     Debug.Log(hit.collider.gameObject.name);
+                    var x =  hit.collider.gameObject.transform.position.x;
+                    var y = hit.collider.gameObject.transform.position.z;
+
+                    int w = (int)(x / 8.5f);
+                    int h = 0;
+                    if (w % 2 == 0)
+                    {
+                        h = (int)y / 10;
+                    }
+                    else
+                    {
+                        h = (int)(y - 5) / 10;
+                    }
+                    gameManager.TileClicked(w,h);
                 }
             }
         }
