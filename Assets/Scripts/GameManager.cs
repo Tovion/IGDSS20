@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public Texture2D mapTexture;
+
+    #region Map generation
+    private Tile[,] _tileMap = new Tile[16,16]; //2D array of all spawned tiles
+    #endregion
 
     //Map Generation
     private void BuildMap()
@@ -15,7 +20,7 @@ public class GameManager : MonoBehaviour
         var xOffset = 0f;
         var zOffset = 0f;
         var counter = 0;
-
+        var mapsize = GetMapSize();
         for (var i = 0; i < pix.Length; i++)
         {
             if (NextRow(i))
@@ -29,10 +34,21 @@ public class GameManager : MonoBehaviour
             var maxColor = Math.Max(Math.Max(pix[i].r, pix[i].g), pix[i].b);
 
             // adapt the prefab height
-            var yOffset = maxColor * 50; 
+            var yOffset = maxColor * 50;
 
-            PlacePrefab(maxColor, xOffset, yOffset, zOffset);
+
+            Tile tile= PlacePrefab(maxColor, xOffset, yOffset, zOffset);
             zOffset += 10;
+            tile._coordinateHeight = i % mapsize;
+            tile._coordinateWidth =counter;
+            _tileMap[counter, i % mapsize] = tile;
+        }
+        for (var i = 0; i< mapsize; i++)
+        {
+            for (var j = 0; j < mapsize; j++)
+            {
+                _tileMap[i, j]._neighborTiles = FindNeighborsOfTile(_tileMap[i, j]);
+            }
         }
     }
 
@@ -45,39 +61,43 @@ public class GameManager : MonoBehaviour
             Mathf.FloorToInt(mapTexture.height));
     }
 
-    private void PlacePrefab(float maxColor, float xOffset, float yOffset, float zOffset)
+    private Tile PlacePrefab(float maxColor, float xOffset, float yOffset, float zOffset)
     {
         if (maxColor <= 0)
         {
-            InstantiatePrefab("WaterTile", xOffset, yOffset, zOffset);
+            return InstantiatePrefab("WaterTile", xOffset, yOffset, zOffset);
+
         }
         else if (maxColor > 0 && maxColor <= 0.2)
         {
-            InstantiatePrefab("SandTile", xOffset, yOffset, zOffset);
+            return InstantiatePrefab("SandTile", xOffset, yOffset, zOffset);
         }
         else if (maxColor > 0.2 && maxColor <= 0.4)
         {
-            InstantiatePrefab("GrassTile", xOffset, yOffset, zOffset);
+            return InstantiatePrefab("GrassTile", xOffset, yOffset, zOffset);
         }
         else if (maxColor > 0.4 && maxColor <= 0.6)
         {
-            InstantiatePrefab("ForestTile", xOffset, yOffset, zOffset);
+            return InstantiatePrefab("ForestTile", xOffset, yOffset, zOffset);
         }
         else if (maxColor > 0.6 && maxColor <= 0.8)
         {
-            InstantiatePrefab("StoneTile", xOffset, yOffset, zOffset);
+            return InstantiatePrefab("StoneTile", xOffset, yOffset, zOffset);
         }
         else if (maxColor > 0.8)
         {
-            InstantiatePrefab("MountainTile", xOffset, yOffset, zOffset);
+            return InstantiatePrefab("MountainTile", xOffset, yOffset, zOffset);
         }
+        return new Tile();
+           
     }
 
-    private void InstantiatePrefab(string prefabName, float xPos, float yPos, float zPos)
+    private Tile InstantiatePrefab(string prefabName, float xPos, float yPos, float zPos)
     {
-        Instantiate(
+        var prefabGameObject = Instantiate(
             (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + prefabName + ".prefab", typeof(GameObject)),
             new Vector3(xPos, yPos, zPos), Quaternion.identity);
+        return prefabGameObject.GetComponent<Tile>();
     }
 
     private bool NextRow(int pixelIndex)
@@ -91,10 +111,6 @@ public class GameManager : MonoBehaviour
         return mapTexture.width; // width = height (since the textures are square)
     }
 
-
-    #region Map generation
-    private Tile[,] _tileMap; //2D array of all spawned tiles
-    #endregion
 
     #region Buildings
     public GameObject[] _buildingPrefabs; //References to the building prefabs
@@ -243,9 +259,51 @@ public class GameManager : MonoBehaviour
     private List<Tile> FindNeighborsOfTile(Tile t)
     {
         List<Tile> result = new List<Tile>();
+        var limit = GetMapSize();
+        var width = t._coordinateWidth;
+        var height = t._coordinateHeight;
 
-        //TODO: put all neighbors in the result list
+        if (width-1 > 0)
+        {
+            result.Add(_tileMap[width - 1, height]);
+        }
+        if (width + 1 < limit)
+        {
+            result.Add(_tileMap[width + 1, height]);
+        }
+        if (height + 1 < limit)
+        {
+            Debug.Log("height:" + height + "limit :" + limit);
+            result.Add(_tileMap[width, height+1]);
+        }
+        if (height - 1 > 0)
+        {
+            result.Add(_tileMap[width, height-1]);
+        }
+        
+        if(width % 2 == 0)
+        {
+            if (width - 1 > 0 && height - 1 > 0)
+            {
+                result.Add(_tileMap[width - 1, height - 1]);
+            }
+            if (width + 1 < limit && height - 1 > 0)
+            {
+                result.Add(_tileMap[width + 1, height - 1]);
+            }
+        }
+        if (width % 2 != 0)
+        {
+            if (width + 1 < limit && height + 1 < limit)
+            {
+                result.Add(_tileMap[width + 1, height + 1]);
+            }
 
+            if (width - 1 > 0 && height + 1 < limit)
+            {
+                result.Add(_tileMap[width - 1, height + 1]);
+            }
+        }
         return result;
     }
     #endregion
