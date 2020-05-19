@@ -266,7 +266,6 @@ public class GameManager : MonoBehaviour
     //Forwards the tile to the method for spawning buildings
     public void TileClicked(int height, int width)
     {
-       
         Tile t = _tileMap[height, width];
         Debug.Log("width: " + width + " height:" + height);
 
@@ -274,32 +273,63 @@ public class GameManager : MonoBehaviour
     }
 
     //Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
-    private void PlaceBuildingOnTile(Tile t)
+    private void PlaceBuildingOnTile(Tile tile)
     {
         //if there is building prefab for the number input
         if (_selectedBuildingPrefabIndex < _buildingPrefabs.Length)
         {
             Building building = _buildingPrefabs[_selectedBuildingPrefabIndex];
-                      if(building.canBeBuiltOnTileTypes.Contains(t._type) && building.buildCostMoney <= currentMoney && building.buildCostPlanks <= _resourcesInWarehouse[ResourceTypes.Planks])
-            {
+               
+            if (BuildingPossible(building, tile))
+            { 
                 currentMoney -= building.buildCostMoney;
                 ChangeResourcesInWarehouse(ResourceTypes.Planks, -building.buildCostPlanks);
-
-                building.tile = t;
+                building.tile = tile;
                 building.calculateOutputResource();
                 building.CalculateEfficency();
                 building.gameManager = this;
-                Instantiate(
-                    (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + building.type + ".prefab", typeof(GameObject)),
-                     new Vector3(t.x, t.y, t.z), Quaternion.identity);
-
+                PlaceBuilding(building, tile);
                 buildings.Add(building);
-                
+                tile._building = building;
             }
-
-            //TODO: check if building can be placed and then istantiate it
         }
     }
+
+    private bool BuildingPossible(Building building, Tile tile)
+    {
+        return HasNoBuilding(tile) && 
+               CanBeBuiltOnTileType(building, tile) &&
+               HasEnoughMoney(building) &&
+               HasEnoughResourceInWarehoues(building);
+    }
+
+    private bool HasNoBuilding(Tile tile)
+    {
+        return tile._building == null;
+    }
+
+    private bool CanBeBuiltOnTileType(Building building, Tile tile)
+    {
+        return building.canBeBuiltOnTileTypes.Contains(tile._type);
+    }
+
+    private bool HasEnoughMoney(Building building)
+    {
+        return building.buildCostMoney <= currentMoney;
+    }
+
+    private bool HasEnoughResourceInWarehoues(Building building)
+    {
+        return building.buildCostPlanks <= _resourcesInWarehouse[ResourceTypes.Planks];
+    }
+
+    private void PlaceBuilding(Building building, Tile tile)
+    {
+        Instantiate(
+            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + building.type + ".prefab", typeof(GameObject)),
+            new Vector3(tile.x, tile.y, tile.z), Quaternion.identity);
+    }
+
 
     //Returns a list of all neighbors of a given tile
     private List<Tile> FindNeighborsOfTile(Tile t)
