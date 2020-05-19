@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Building : MonoBehaviour
@@ -51,17 +50,7 @@ public class Building : MonoBehaviour
             efficencyValue = 1;
         }
     }
-    void InputOutput()
-    {
-        foreach(GameManager.ResourceTypes i in inputRessources)
-        {
-            if (gameManager.HasResourceInWarehoues(i))
-            {
-                gameManager.ChangeResourcesInWarehouse(i, -1);
-            }
-        }
-        gameManager.ChangeResourcesInWarehouse(outputRessources,(int) efficencyValue * outputCount);
-    }
+
     void callInputOutput()
     {
         timer += Time.deltaTime;
@@ -72,6 +61,22 @@ public class Building : MonoBehaviour
         }
 
     }
+
+    void InputOutput()
+    {
+        foreach (GameManager.ResourceTypes i in inputRessources)
+        {
+            if (gameManager.HasResourceInWarehoues(i))
+            {
+                gameManager.ChangeResourcesInWarehouse(i, -1);
+            }
+        }
+
+        gameManager.ChangeResourcesInWarehouse(outputRessources, (float) System.Math.Round(efficencyValue * outputCount, 2));
+
+        Debug.Log(efficencyValue * outputCount);
+    }
+
     public void calculateOutputResource()
     {
         switch(type){

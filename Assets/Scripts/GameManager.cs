@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
         var xOffset = 0f;
         var zOffset = 0f;
         var counter = 0;
-        var mapsize = GetMapSize();
+        var mapSize = GetMapSize();
         for (var i = 0; i < pix.Length; i++)
         {
             if (NextRow(i))
@@ -40,17 +40,17 @@ public class GameManager : MonoBehaviour
 
 
             Tile tile= PlacePrefab(maxColor, xOffset, yOffset, zOffset);
-            tile._coordinateHeight = i % mapsize;
+            tile._coordinateHeight = i % mapSize;
             tile.x = xOffset;
             tile.y = yOffset;
             tile.z = zOffset;
             tile._coordinateWidth =counter;
-            _tileMap[counter, i % mapsize] = tile;
+            _tileMap[counter, i % mapSize] = tile;
             zOffset += 10;
         }
-        for (var i = 0; i< mapsize; i++)
+        for (var i = 0; i< mapSize; i++)
         {
-            for (var j = 0; j < mapsize; j++)
+            for (var j = 0; j < mapSize; j++)
             {
                 _tileMap[i, j]._neighborTiles = FindNeighborsOfTile(_tileMap[i, j]);
             }
@@ -195,7 +195,7 @@ public class GameManager : MonoBehaviour
         _resourcesInWarehouse.Add(ResourceTypes.Potato, 0);
         _resourcesInWarehouse.Add(ResourceTypes.Schnapps, 0);
     }
-    public void ChangeResourcesInWarehouse(ResourceTypes resource, int changingNumber)
+    public void ChangeResourcesInWarehouse(ResourceTypes resource, float changingNumber)
     {
         _resourcesInWarehouse[resource] += changingNumber; 
     }
@@ -300,7 +300,7 @@ public class GameManager : MonoBehaviour
         return HasNoBuilding(tile) && 
                CanBeBuiltOnTileType(building, tile) &&
                HasEnoughMoney(building) &&
-               HasEnoughResourceInWarehoues(building);
+               HasEnoughPlanksInWarehoues(building);
     }
 
     private bool HasNoBuilding(Tile tile)
@@ -318,7 +318,7 @@ public class GameManager : MonoBehaviour
         return building.buildCostMoney <= currentMoney;
     }
 
-    private bool HasEnoughResourceInWarehoues(Building building)
+    private bool HasEnoughPlanksInWarehoues(Building building)
     {
         return building.buildCostPlanks <= _resourcesInWarehouse[ResourceTypes.Planks];
     }

@@ -14,6 +14,9 @@ public class MouseManager : MonoBehaviour
     private Vector2 cachedMousePosition;
     private Vector3 cachedCameraPosition;
 
+    // for mouse scroll wheel
+    const float MAX_ZOOM_IN = 60f;
+    const float MAX_ZOOM_OUT = 120f;
     private void Start()
     {
         InitCamera();
@@ -51,7 +54,7 @@ public class MouseManager : MonoBehaviour
                     var y = hit.collider.gameObject.transform.position.z;
 
                     int w = (int)(x / 8.5f);
-                    int h = 0;
+                    int h;
                     if (w % 2 == 0)
                     {
                         h = (int)y / 10;
@@ -105,8 +108,6 @@ public class MouseManager : MonoBehaviour
 
     private void CameraScrollWheel()
     {
-        const float MAX_ZOOM_IN = 60f;
-        const float MAX_ZOOM_OUT = 120f;
         var yCamPos = cam.transform.position.y;
 
        if (yCamPos < MAX_ZOOM_OUT && Input.GetAxis("Mouse ScrollWheel") < 0f) // zoom out
