@@ -327,7 +327,7 @@ public class GameManager : MonoBehaviour
     {
         Instantiate(
             (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + building.type + ".prefab", typeof(GameObject)),
-            new Vector3(tile.x, tile.y, tile.z), Quaternion.identity);
+            new Vector3(tile.x+building.transform.position.x, tile.y+building.transform.position.y, tile.z+building.transform.position.z), building.transform.rotation);
     }
 
 

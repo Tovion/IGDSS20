@@ -993,6 +993,12 @@ MonoBehaviour:
   currentMoney: 500
   _buildingPrefabs:
   - {fileID: 1818089961569851303, guid: a6e8ead8d55769542b823132b1274f39, type: 3}
+  - {fileID: 278818919288071627, guid: 61765fb0c9a418c41bebef33f0f3fc1b, type: 3}
+  - {fileID: 8402713754702587888, guid: ed6d62191518f954aab07cc0a92ce750, type: 3}
+  - {fileID: 2563268279217526117, guid: 1a2666774ce4dfc46af9f95916601db0, type: 3}
+  - {fileID: 3714827951599164908, guid: b7a529b6d58085e49992f72c05495662, type: 3}
+  - {fileID: 1361532374341963637, guid: 9d2c1fc5307a15f449a7ee1f6e6b6db0, type: 3}
+  - {fileID: 4635939247373413436, guid: aac4d4c52a5d38d4eb97bf6b83446031, type: 3}
   _selectedBuildingPrefabIndex: 0
   buildings: []
   _ResourcesInWarehouse_Fish: 0

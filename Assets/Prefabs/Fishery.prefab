@@ -127,16 +127,16 @@ MonoBehaviour:
   type: Fishery
   upkeep: 40
   buildCostMoney: 100
-  buildCostPlanks: 0
+  buildCostPlanks: 2
   tile: {fileID: 0}
-  efficencyValue: 0
+  efficencyValue: 0.6666667
   ressourceGenerationInterval: 30
   outputCount: 1
   canBeBuiltOnTileTypes: 02000000
-  efficencyScalesWithNighboringTiles: 
+  efficencyScalesWithNighboringTiles: 0100000001000000
   minMaxNeighbours: 3
   inputRessources: 
-  outputRessources: 0
+  outputRessources: 1
 --- !u!1001 &8600267010466155170
 PrefabInstance:
   m_ObjectHideFlags: 0

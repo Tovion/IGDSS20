@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Building : MonoBehaviour
@@ -37,14 +38,18 @@ public class Building : MonoBehaviour
         float improvingNeihgbours = 0;
         foreach (Tile t in neighbours)
         {
+            
             if(efficencyScalesWithNighboringTiles.Contains(t._type))
             {
                 improvingNeihgbours++;
             }
         }
-        Debug.Log(improvingNeihgbours/minMaxNeighbours );
+       // Debug.Log(improvingNeihgbours/minMaxNeighbours );
         efficencyValue = improvingNeihgbours / minMaxNeighbours;
-
+        if (efficencyScalesWithNighboringTiles.Count == 0)
+        {
+            efficencyValue = 1;
+        }
         if (efficencyValue> 1)
         {
             efficencyValue = 1;
@@ -64,17 +69,25 @@ public class Building : MonoBehaviour
 
     void InputOutput()
     {
+        Boolean allInputResourcesAvailable = true;
         foreach (GameManager.ResourceTypes i in inputRessources)
         {
-            if (gameManager.HasResourceInWarehoues(i))
+            if (!gameManager.HasResourceInWarehoues(i))
+            {
+                allInputResourcesAvailable = false;
+            }
+
+        }
+        if (allInputResourcesAvailable)
+        {
+            foreach (GameManager.ResourceTypes i in inputRessources)
             {
                 gameManager.ChangeResourcesInWarehouse(i, -1);
             }
+            Debug.Log((float)System.Math.Round(efficencyValue * outputCount, 2));
+            gameManager.ChangeResourcesInWarehouse(outputRessources, (float)System.Math.Round(efficencyValue * outputCount, 2));
         }
-
-        gameManager.ChangeResourcesInWarehouse(outputRessources, (float) System.Math.Round(efficencyValue * outputCount, 2));
-
-        Debug.Log(efficencyValue * outputCount);
+        //Debug.Log(efficencyValue * outputCount);
     }
 
     public void calculateOutputResource()
