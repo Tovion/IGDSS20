@@ -4,16 +4,6 @@ using UnityEngine;
 
 public class Building : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        callInputOutput();
-    }
     public GameManager gameManager;
     //parameters
     #region parameters
@@ -32,20 +22,26 @@ public class Building : MonoBehaviour
     public List<GameManager.ResourceTypes> inputRessources;
     public GameManager.ResourceTypes outputRessources;
     #endregion
-    public void CalculateEfficency()
+
+    void Update()
+    {
+        CallInputOutput();
+    }
+    
+    public void CalculateEfficiency()
     {
         var neighbours = tile._neighborTiles;
-        float improvingNeihgbours = 0;
+        float improvingNeighbours = 0;
+
         foreach (Tile t in neighbours)
         {
-            
             if(efficencyScalesWithNighboringTiles.Contains(t._type))
             {
-                improvingNeihgbours++;
+                improvingNeighbours++;
             }
         }
-       // Debug.Log(improvingNeihgbours/minMaxNeighbours );
-        efficencyValue = improvingNeihgbours / minMaxNeighbours;
+      
+        efficencyValue = improvingNeighbours / minMaxNeighbours;
         if (efficencyScalesWithNighboringTiles.Count == 0)
         {
             efficencyValue = 1;
@@ -56,7 +52,7 @@ public class Building : MonoBehaviour
         }
     }
 
-    void callInputOutput()
+    void CallInputOutput()
     {
         timer += Time.deltaTime;
         if (timer > ressourceGenerationInterval)
@@ -64,7 +60,6 @@ public class Building : MonoBehaviour
             InputOutput();
             timer -= ressourceGenerationInterval;
         }
-
     }
 
     void InputOutput()
@@ -84,13 +79,11 @@ public class Building : MonoBehaviour
             {
                 gameManager.ChangeResourcesInWarehouse(i, -1);
             }
-            Debug.Log((float)System.Math.Round(efficencyValue * outputCount, 2));
             gameManager.ChangeResourcesInWarehouse(outputRessources, (float)System.Math.Round(efficencyValue * outputCount, 2));
         }
-        //Debug.Log(efficencyValue * outputCount);
     }
 
-    public void calculateOutputResource()
+    public void CalculateOutputResource()
     {
         switch(type){
             case "Fishery":

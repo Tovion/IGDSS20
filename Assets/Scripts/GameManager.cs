@@ -1,19 +1,37 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public Texture2D mapTexture;
-    float timer;
     public int currentMoney;
+    private float timer;
 
     #region Map generation
-    private Tile[,] _tileMap = new Tile[16,16]; //2D array of all spawned tiles
+    private Tile[,] _tileMap; //2D array of all spawned tiles
     #endregion
+
+    void Start()
+    {
+        PopulateResourceDictionary();
+        InitTileMap();
+        BuildMap();
+        InitCamera();
+    }
+
+    void Update()
+    {
+        HandleKeyboardInput();
+        UpdateInspectorNumbersForResources();
+        Upkeep();
+    }
+
+    private void InitTileMap()
+    {
+        _tileMap = new Tile[mapTexture.width, mapTexture.height];
+    }
 
     //Map Generation
     private void BuildMap()
@@ -38,12 +56,8 @@ public class GameManager : MonoBehaviour
             // adapt the prefab height
             var yOffset = maxColor * 50;
 
-
             Tile tile= PlacePrefab(maxColor, xOffset, yOffset, zOffset);
             tile._coordinateHeight = i % mapSize;
-            tile.x = xOffset;
-            tile.y = yOffset;
-            tile.z = zOffset;
             tile._coordinateWidth =counter;
             _tileMap[counter, i % mapSize] = tile;
             zOffset += 10;
@@ -71,7 +85,6 @@ public class GameManager : MonoBehaviour
         if (maxColor <= 0)
         {
             return InstantiatePrefab("WaterTile", xOffset, yOffset, zOffset);
-
         }
         else if (maxColor > 0 && maxColor <= 0.2)
         {
@@ -110,19 +123,23 @@ public class GameManager : MonoBehaviour
         return (pixelIndex != 0) && (pixelIndex % (int) mapTexture.width) == 0;
     }
 
+    private void InitCamera()
+    {
+        Camera.main.transform.SetPositionAndRotation(
+            new Vector3(150f, 100f, 80f),
+            Quaternion.Euler(new Vector3(60f, -90f, 0f)));
+    }
 
     public int GetMapSize()
     {
         return mapTexture.width; // width = height (since the textures are square)
     }
 
-
     #region Buildings
     public Building[] _buildingPrefabs; //References to the building prefabs
     public int _selectedBuildingPrefabIndex = 0; //The current index used for choosing a prefab to spawn from the _buildingPrefabs list
     public List<Building> buildings;
     #endregion
-
 
     #region Resources
     private Dictionary<ResourceTypes, float> _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); //Holds a number of stored resources for every ResourceType
@@ -148,22 +165,6 @@ public class GameManager : MonoBehaviour
     public enum ResourceTypes { None, Fish, Wood, Planks, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
     #endregion
 
-    #region MonoBehaviour
-    // Start is called before the first frame update
-    void Start()
-    {
-        PopulateResourceDictionary();
-        BuildMap();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        HandleKeyboardInput();
-        UpdateInspectorNumbersForResources();
-        Upkeep();
-    }
-
     private void Upkeep()
     {
         timer += Time.deltaTime;
@@ -171,16 +172,14 @@ public class GameManager : MonoBehaviour
         if (timer > waitTime)
         {
             int overallUpkeep = 100;
-            foreach(Building b in buildings)
+            foreach(Building building in buildings)
             {
-                overallUpkeep -= b.upkeep;
+                overallUpkeep -= building.upkeep;
             }
             currentMoney += overallUpkeep;
             timer -= waitTime;
-
         }
     }
-    #endregion
 
     #region Methods
     //Makes the resource dictionary usable by populating the values and keys
@@ -199,6 +198,7 @@ public class GameManager : MonoBehaviour
     {
         _resourcesInWarehouse[resource] += changingNumber; 
     }
+
     //Sets the index for the currently selected building prefab by checking key presses on the numbers 1 to 0
     void HandleKeyboardInput()
     {
@@ -266,10 +266,8 @@ public class GameManager : MonoBehaviour
     //Forwards the tile to the method for spawning buildings
     public void TileClicked(int height, int width)
     {
-        Tile t = _tileMap[height, width];
-        Debug.Log("width: " + width + " height:" + height);
-
-        PlaceBuildingOnTile(t);
+        Tile tile = _tileMap[height, width];
+        PlaceBuildingOnTile(tile);
     }
 
     //Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
@@ -285,8 +283,8 @@ public class GameManager : MonoBehaviour
                 currentMoney -= building.buildCostMoney;
                 ChangeResourcesInWarehouse(ResourceTypes.Planks, -building.buildCostPlanks);
                 building.tile = tile;
-                building.calculateOutputResource();
-                building.CalculateEfficency();
+                building.CalculateOutputResource();
+                building.CalculateEfficiency();
                 building.gameManager = this;
                 PlaceBuilding(building, tile);
                 buildings.Add(building);
@@ -325,11 +323,14 @@ public class GameManager : MonoBehaviour
 
     private void PlaceBuilding(Building building, Tile tile)
     {
+        float buildPosX = tile.transform.position.x + building.transform.position.x;
+        float buildPosY = tile.transform.position.y + building.transform.position.y;
+        float buildPosZ = tile.transform.position.z + building.transform.position.z;
+
         Instantiate(
             (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + building.type + ".prefab", typeof(GameObject)),
-            new Vector3(tile.x+building.transform.position.x, tile.y+building.transform.position.y, tile.z+building.transform.position.z), building.transform.rotation);
+            new Vector3(buildPosX, buildPosY, buildPosZ), building.transform.rotation);
     }
-
 
     //Returns a list of all neighbors of a given tile
     private List<Tile> FindNeighborsOfTile(Tile t)
@@ -382,5 +383,4 @@ public class GameManager : MonoBehaviour
         return result;
     }
     #endregion
-
 }

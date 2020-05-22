@@ -17,19 +17,12 @@ public class MouseManager : MonoBehaviour
     // for mouse scroll wheel
     const float MAX_ZOOM_IN = 60f;
     const float MAX_ZOOM_OUT = 120f;
+
     private void Start()
     {
-        InitCamera();
+        cam = Camera.main;
         mapSize = 10 * gameManager.GetMapSize();
         rightMouseClickHold = false;
-    }
-
-    private void InitCamera()
-    {
-        cam = Camera.main;
-        cam.transform.SetPositionAndRotation(
-            new Vector3(150f, 100f, 80f), 
-            Quaternion.Euler(new Vector3(60f, -90f, 0f)));
     }
 
     void Update()
@@ -47,23 +40,12 @@ public class MouseManager : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out var hit))
             {
-                if (hit.collider.gameObject.layer == TILE_LAYER)
+                GameObject gameObj = hit.collider.gameObject;
+                
+                if (gameObj.layer == TILE_LAYER)
                 {
-                    Debug.Log(hit.collider.gameObject.name);
-                    var x =  hit.collider.gameObject.transform.position.x;
-                    var y = hit.collider.gameObject.transform.position.z;
-
-                    int w = (int)(x / 8.5f);
-                    int h;
-                    if (w % 2 == 0)
-                    {
-                        h = (int)y / 10;
-                    }
-                    else
-                    {
-                        h = (int)(y - 5) / 10;
-                    }
-                    gameManager.TileClicked(w,h);
+                    Tile tile = gameObj.GetComponent<Tile>();
+                    gameManager.TileClicked(tile._coordinateWidth, tile._coordinateHeight);
                 }
             }
         }
