@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         InitCamera();
-        InitWarehouse();
+        PopulateResourceDictionary();
         InitTileMap();
         BuildMap();
     }
@@ -71,24 +71,21 @@ public class GameManager : MonoBehaviour
             Quaternion.Euler(new Vector3(60f, -90f, 0f)));
     }
 
-    private void InitWarehouse()
-    {
-        //The warehouse dictionary holds a number of stored resources for every ResourceType
-        _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); 
-        PopulateResourceDictionary();
-    }
-
     //Makes the resource dictionary usable by populating the values and keys
     private void PopulateResourceDictionary()
     {
-        _resourcesInWarehouse.Add(ResourceTypes.None, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Fish, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Wood, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Planks, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Wool, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Clothes, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Potato, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Schnapps, 0);
+        //The warehouse dictionary holds a number of stored resources for every ResourceType
+        _resourcesInWarehouse = new Dictionary<ResourceTypes, float>
+        {
+            { ResourceTypes.None, 0 },
+            { ResourceTypes.Fish, 0 },
+            { ResourceTypes.Wood, 0 },
+            { ResourceTypes.Planks, 0 },
+            { ResourceTypes.Wool, 0 },
+            { ResourceTypes.Clothes, 0 },
+            { ResourceTypes.Potato, 0 },
+            { ResourceTypes.Schnapps, 0 }
+        };
     }
 
     private void InitTileMap()
