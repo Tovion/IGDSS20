@@ -5,20 +5,56 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public Texture2D mapTexture;
     public int currentMoney;
-    private float timer;
+
+    #region Enumerations
+    public enum ResourceTypes { None, Fish, Wood, Planks, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types.
+    #endregion
 
     #region Map generation
+    public Texture2D mapTexture;
     private Tile[,] _tileMap; //2D array of all spawned tiles
+    #endregion
+
+    #region Resources
+    private Dictionary<ResourceTypes, float> _resourcesInWarehouse;
+    #endregion
+
+    #region Buildings
+    public Building[] _buildingPrefabs; //References to the building prefabs
+    public int _selectedBuildingPrefabIndex = 0; //The current index used for choosing a prefab to spawn from the _buildingPrefabs list
+    public List<Building> buildings;
+    #endregion
+
+    #region Upkeep
+    private float timer;
+    private const float WAIT_TIME_IN_SECONDS = 60f;
+    #endregion
+
+    #region Resources for inspector view
+    //A representation of _resourcesInWarehouse, broken into individual floats. Only for display in inspector, will be removed and replaced with UI later
+    [SerializeField]
+    private float _ResourcesInWarehouse_Fish;
+    [SerializeField]
+    private float _ResourcesInWarehouse_Wood;
+    [SerializeField]
+    private float _ResourcesInWarehouse_Planks;
+    [SerializeField]
+    private float _ResourcesInWarehouse_Wool;
+    [SerializeField]
+    private float _ResourcesInWarehouse_Clothes;
+    [SerializeField]
+    private float _ResourcesInWarehouse_Potato;
+    [SerializeField]
+    private float _ResourcesInWarehouse_Schnapps;
     #endregion
 
     void Start()
     {
-        PopulateResourceDictionary();
+        InitCamera();
+        InitWarehouse();
         InitTileMap();
         BuildMap();
-        InitCamera();
     }
 
     void Update()
@@ -28,12 +64,38 @@ public class GameManager : MonoBehaviour
         Upkeep();
     }
 
+    private void InitCamera()
+    {
+        Camera.main.transform.SetPositionAndRotation(
+            new Vector3(150f, 100f, 80f),
+            Quaternion.Euler(new Vector3(60f, -90f, 0f)));
+    }
+
+    private void InitWarehouse()
+    {
+        //The warehouse dictionary holds a number of stored resources for every ResourceType
+        _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); 
+        PopulateResourceDictionary();
+    }
+
+    //Makes the resource dictionary usable by populating the values and keys
+    private void PopulateResourceDictionary()
+    {
+        _resourcesInWarehouse.Add(ResourceTypes.None, 0);
+        _resourcesInWarehouse.Add(ResourceTypes.Fish, 0);
+        _resourcesInWarehouse.Add(ResourceTypes.Wood, 0);
+        _resourcesInWarehouse.Add(ResourceTypes.Planks, 0);
+        _resourcesInWarehouse.Add(ResourceTypes.Wool, 0);
+        _resourcesInWarehouse.Add(ResourceTypes.Clothes, 0);
+        _resourcesInWarehouse.Add(ResourceTypes.Potato, 0);
+        _resourcesInWarehouse.Add(ResourceTypes.Schnapps, 0);
+    }
+
     private void InitTileMap()
     {
         _tileMap = new Tile[mapTexture.width, mapTexture.height];
     }
 
-    //Map Generation
     private void BuildMap()
     {
         var pix = GetPixels();
@@ -107,7 +169,6 @@ public class GameManager : MonoBehaviour
             return InstantiatePrefab("MountainTile", xOffset, yOffset, zOffset);
         }
         return new Tile();
-           
     }
 
     private Tile InstantiatePrefab(string prefabName, float xPos, float yPos, float zPos)
@@ -123,77 +184,11 @@ public class GameManager : MonoBehaviour
         return (pixelIndex != 0) && (pixelIndex % (int) mapTexture.width) == 0;
     }
 
-    private void InitCamera()
-    {
-        Camera.main.transform.SetPositionAndRotation(
-            new Vector3(150f, 100f, 80f),
-            Quaternion.Euler(new Vector3(60f, -90f, 0f)));
-    }
-
     public int GetMapSize()
     {
         return mapTexture.width; // width = height (since the textures are square)
     }
 
-    #region Buildings
-    public Building[] _buildingPrefabs; //References to the building prefabs
-    public int _selectedBuildingPrefabIndex = 0; //The current index used for choosing a prefab to spawn from the _buildingPrefabs list
-    public List<Building> buildings;
-    #endregion
-
-    #region Resources
-    private Dictionary<ResourceTypes, float> _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); //Holds a number of stored resources for every ResourceType
-
-    //A representation of _resourcesInWarehouse, broken into individual floats. Only for display in inspector, will be removed and replaced with UI later
-    [SerializeField]
-    private float _ResourcesInWarehouse_Fish;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Wood;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Planks;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Wool;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Clothes;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Potato;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Schnapps;
-    #endregion
-
-    #region Enumerations
-    public enum ResourceTypes { None, Fish, Wood, Planks, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
-    #endregion
-
-    private void Upkeep()
-    {
-        timer += Time.deltaTime;
-        float waitTime = 60.0f;
-        if (timer > waitTime)
-        {
-            int overallUpkeep = 100;
-            foreach(Building building in buildings)
-            {
-                overallUpkeep -= building.upkeep;
-            }
-            currentMoney += overallUpkeep;
-            timer -= waitTime;
-        }
-    }
-
-    #region Methods
-    //Makes the resource dictionary usable by populating the values and keys
-    void PopulateResourceDictionary()
-    {
-        _resourcesInWarehouse.Add(ResourceTypes.None, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Fish, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Wood, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Planks, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Wool, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Clothes, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Potato, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Schnapps, 0);
-    }
     public void ChangeResourcesInWarehouse(ResourceTypes resource, float changingNumber)
     {
         _resourcesInWarehouse[resource] += changingNumber; 
@@ -245,7 +240,7 @@ public class GameManager : MonoBehaviour
     }
 
     //Updates the visual representation of the resource dictionary in the inspector. Only for debugging
-    void UpdateInspectorNumbersForResources()
+    private void UpdateInspectorNumbersForResources()
     {
         _ResourcesInWarehouse_Fish = _resourcesInWarehouse[ResourceTypes.Fish];
         _ResourcesInWarehouse_Wood = _resourcesInWarehouse[ResourceTypes.Wood];
@@ -254,6 +249,21 @@ public class GameManager : MonoBehaviour
         _ResourcesInWarehouse_Clothes = _resourcesInWarehouse[ResourceTypes.Clothes];
         _ResourcesInWarehouse_Potato = _resourcesInWarehouse[ResourceTypes.Potato];
         _ResourcesInWarehouse_Schnapps = _resourcesInWarehouse[ResourceTypes.Schnapps];
+    }
+
+    private void Upkeep()
+    {
+        timer += Time.deltaTime;
+        if (timer > WAIT_TIME_IN_SECONDS)
+        {
+            var overallUpkeep = 100;
+            foreach (Building building in buildings)
+            {
+                overallUpkeep -= building.upkeep;
+            }
+            currentMoney += overallUpkeep;
+            timer -= WAIT_TIME_IN_SECONDS;
+        }
     }
 
     //Checks if there is at least one material for the queried resource type in the warehouse
@@ -298,7 +308,7 @@ public class GameManager : MonoBehaviour
         return HasNoBuilding(tile) && 
                CanBeBuiltOnTileType(building, tile) &&
                HasEnoughMoney(building) &&
-               HasEnoughPlanksInWarehoues(building);
+               HasEnoughPlanksInWarehouse(building);
     }
 
     private bool HasNoBuilding(Tile tile)
@@ -316,16 +326,16 @@ public class GameManager : MonoBehaviour
         return building.buildCostMoney <= currentMoney;
     }
 
-    private bool HasEnoughPlanksInWarehoues(Building building)
+    private bool HasEnoughPlanksInWarehouse(Building building)
     {
         return building.buildCostPlanks <= _resourcesInWarehouse[ResourceTypes.Planks];
     }
 
     private void PlaceBuilding(Building building, Tile tile)
     {
-        float buildPosX = tile.transform.position.x + building.transform.position.x;
-        float buildPosY = tile.transform.position.y + building.transform.position.y;
-        float buildPosZ = tile.transform.position.z + building.transform.position.z;
+        var buildPosX = tile.transform.position.x + building.transform.position.x;
+        var buildPosY = tile.transform.position.y + building.transform.position.y;
+        var buildPosZ = tile.transform.position.z + building.transform.position.z;
 
         Instantiate(
             (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + building.type + ".prefab", typeof(GameObject)),
@@ -382,5 +392,4 @@ public class GameManager : MonoBehaviour
         }
         return result;
     }
-    #endregion
 }

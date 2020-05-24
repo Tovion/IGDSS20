@@ -5,9 +5,9 @@ using UnityEngine;
 public class Building : MonoBehaviour
 {
     public GameManager gameManager;
-    //parameters
+    
     #region parameters
-    float timer = 0;
+    private float timer;
     public string type;
     public int upkeep;
     public int buildCostMoney;
@@ -79,7 +79,7 @@ public class Building : MonoBehaviour
             {
                 gameManager.ChangeResourcesInWarehouse(i, -1);
             }
-            gameManager.ChangeResourcesInWarehouse(outputRessources, (float)System.Math.Round(efficencyValue * outputCount, 2));
+            gameManager.ChangeResourcesInWarehouse(outputRessources, (float)Math.Round(efficencyValue * outputCount, 2));
         }
     }
 
