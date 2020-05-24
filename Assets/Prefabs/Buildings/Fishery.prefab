@@ -130,14 +130,14 @@ MonoBehaviour:
   buildCostMoney: 100
   buildCostPlanks: 2
   tile: {fileID: 0}
-  efficencyValue: 0.6666667
-  ressourceGenerationInterval: 30
+  efficiencyValue: 0
+  resourceGenerationInterval: 30
   outputCount: 1
   canBeBuiltOnTileTypes: 02000000
-  efficencyScalesWithNighboringTiles: 0100000001000000
-  minMaxNeighbours: 3
-  inputRessources: 
-  outputRessources: 1
+  efficiencyScalesWithNeighboringTiles: 
+  minMaxNeighbors: 3
+  inputResources: 
+  outputResources: 1
 --- !u!1001 &2722606447649755996
 PrefabInstance:
   m_ObjectHideFlags: 0

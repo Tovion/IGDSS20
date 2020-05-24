@@ -95,12 +95,19 @@ public class GameManager : MonoBehaviour
 
     private void BuildMap()
     {
-        var pix = GetPixels();
+        PlaceTilePrefabs();
+        SetNeighborTiles();
+    }
+
+    private void PlaceTilePrefabs()
+    {
+        var mapSize = GetMapSize();
+        var pixels = GetPixels();
         var xOffset = 0f;
         var zOffset = 0f;
         var counter = 0;
-        var mapSize = GetMapSize();
-        for (var i = 0; i < pix.Length; i++)
+       
+        for (var i = 0; i < pixels.Length; i++)
         {
             if (NextRow(i))
             {
@@ -110,18 +117,23 @@ public class GameManager : MonoBehaviour
             }
 
             // maxColor is the maximum RGB value of a pixel [0;1]
-            var maxColor = Math.Max(Math.Max(pix[i].r, pix[i].g), pix[i].b);
+            var maxColor = Math.Max(Math.Max(pixels[i].r, pixels[i].g), pixels[i].b);
 
             // adapt the prefab height
             var yOffset = maxColor * 50;
 
-            Tile tile= PlacePrefab(maxColor, xOffset, yOffset, zOffset);
+            Tile tile = PlacePrefab(maxColor, xOffset, yOffset, zOffset);
             tile._coordinateHeight = i % mapSize;
-            tile._coordinateWidth =counter;
+            tile._coordinateWidth = counter;
             _tileMap[counter, i % mapSize] = tile;
             zOffset += 10;
         }
-        for (var i = 0; i< mapSize; i++)
+    }
+
+    private void SetNeighborTiles()
+    {
+        var mapSize = GetMapSize();
+        for (var i = 0; i < mapSize; i++)
         {
             for (var j = 0; j < mapSize; j++)
             {
@@ -145,33 +157,29 @@ public class GameManager : MonoBehaviour
         {
             return InstantiatePrefab("WaterTile", xOffset, yOffset, zOffset);
         }
-        else if (maxColor > 0 && maxColor <= 0.2)
+        if (maxColor > 0 && maxColor <= 0.2)
         {
             return InstantiatePrefab("SandTile", xOffset, yOffset, zOffset);
         }
-        else if (maxColor > 0.2 && maxColor <= 0.4)
+        if (maxColor > 0.2 && maxColor <= 0.4)
         {
             return InstantiatePrefab("GrassTile", xOffset, yOffset, zOffset);
         }
-        else if (maxColor > 0.4 && maxColor <= 0.6)
+        if (maxColor > 0.4 && maxColor <= 0.6)
         {
             return InstantiatePrefab("ForestTile", xOffset, yOffset, zOffset);
         }
-        else if (maxColor > 0.6 && maxColor <= 0.8)
+        if (maxColor > 0.6 && maxColor <= 0.8)
         {
             return InstantiatePrefab("StoneTile", xOffset, yOffset, zOffset);
         }
-        else if (maxColor > 0.8)
-        {
-            return InstantiatePrefab("MountainTile", xOffset, yOffset, zOffset);
-        }
-        return new Tile();
+        return InstantiatePrefab("MountainTile", xOffset, yOffset, zOffset);
     }
 
     private Tile InstantiatePrefab(string prefabName, float xPos, float yPos, float zPos)
     {
         var prefabGameObject = Instantiate(
-            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + prefabName + ".prefab", typeof(GameObject)),
+            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Tiles/" + prefabName + ".prefab", typeof(GameObject)),
             new Vector3(xPos, yPos, zPos), Quaternion.identity);
         return prefabGameObject.GetComponent<Tile>();
     }
@@ -335,58 +343,68 @@ public class GameManager : MonoBehaviour
         var buildPosZ = tile.transform.position.z + building.transform.position.z;
 
         Instantiate(
-            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + building.type + ".prefab", typeof(GameObject)),
+            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Buildings/" + building.type + ".prefab", typeof(GameObject)),
             new Vector3(buildPosX, buildPosY, buildPosZ), building.transform.rotation);
     }
 
     //Returns a list of all neighbors of a given tile
     private List<Tile> FindNeighborsOfTile(Tile t)
     {
-        List<Tile> result = new List<Tile>();
+        var result = new List<Tile>();
         var limit = GetMapSize();
-        var width = t._coordinateWidth;
-        var height = t._coordinateHeight;
+        var rowIndex = t._coordinateWidth;
+        var colIndex = t._coordinateHeight;
 
-        if (width-1 > 0)
+        if (rowIndex-1 > 0)
         {
-            result.Add(_tileMap[width - 1, height]);
+            result.Add(_tileMap[rowIndex - 1, colIndex]);
         }
-        if (width + 1 < limit)
+        if (rowIndex + 1 < limit)
         {
-            result.Add(_tileMap[width + 1, height]);
+            result.Add(_tileMap[rowIndex + 1, colIndex]);
         }
-        if (height + 1 < limit)
+        if (colIndex + 1 < limit)
         {
-            result.Add(_tileMap[width, height+1]);
+            result.Add(_tileMap[rowIndex, colIndex+1]);
         }
-        if (height - 1 > 0)
+        if (colIndex - 1 > 0)
         {
-            result.Add(_tileMap[width, height-1]);
+            result.Add(_tileMap[rowIndex, colIndex-1]);
         }
         
-        if(width % 2 == 0)
+        if(IsEven(rowIndex))
         {
-            if (width - 1 > 0 && height - 1 > 0)
+            if (rowIndex - 1 > 0 && colIndex - 1 > 0)
             {
-                result.Add(_tileMap[width - 1, height - 1]);
+                result.Add(_tileMap[rowIndex - 1, colIndex - 1]);
             }
-            if (width + 1 < limit && height - 1 > 0)
+            if (rowIndex + 1 < limit && colIndex - 1 > 0)
             {
-                result.Add(_tileMap[width + 1, height - 1]);
+                result.Add(_tileMap[rowIndex + 1, colIndex - 1]);
             }
         }
-        if (width % 2 != 0)
+        if (IsOdd(rowIndex))
         {
-            if (width + 1 < limit && height + 1 < limit)
+            if (rowIndex + 1 < limit && colIndex + 1 < limit)
             {
-                result.Add(_tileMap[width + 1, height + 1]);
+                result.Add(_tileMap[rowIndex + 1, colIndex + 1]);
             }
 
-            if (width - 1 > 0 && height + 1 < limit)
+            if (rowIndex - 1 > 0 && colIndex + 1 < limit)
             {
-                result.Add(_tileMap[width - 1, height + 1]);
+                result.Add(_tileMap[rowIndex - 1, colIndex + 1]);
             }
         }
         return result;
+    }
+
+    private bool IsEven(int number)
+    {
+        return number % 2 == 0;
+    }
+
+    private bool IsOdd(int number)
+    {
+        return number % 2 != 0;
     }
 }
