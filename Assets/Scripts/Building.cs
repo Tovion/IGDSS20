@@ -1,112 +1,43 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class Building : MonoBehaviour
+public abstract class Building : MonoBehaviour
 {
+    #region Manager References
     public GameManager gameManager;
+    public JobManager jobManager; //Reference to the JobManager
+    #endregion
     
-    #region parameters
-    private float timer;
-    public string type;
-    public int upkeep;
-    public int buildCostMoney;
-    public int buildCostPlanks;
-    public Tile tile;
-    public float efficiencyValue;
-    public float resourceGenerationInterval;
-    public int outputCount;
-    public List<Tile.TileTypes> canBeBuiltOnTileTypes;
-    public List<Tile.TileTypes> efficiencyScalesWithNeighboringTiles;
-    public int minMaxNeighbors;
-    public List<GameManager.ResourceTypes> inputResources;
-    public GameManager.ResourceTypes outputResources;
+    #region Workers
+    public List<Worker> _workers = new List<Worker>(); //List of all workers associated with this building, either for work or living
     #endregion
 
-    void Update()
-    {
-        CallInputOutput();
-    }
-    
-    public void CalculateEfficiency()
-    {
-        efficiencyValue = 1;
-        var neighborTiles = tile._neighborTiles;
-        float improvingNeighbors = 0;
-        
-        foreach (Tile neighborTile in neighborTiles)
-        {
-            if(efficiencyScalesWithNeighboringTiles.Contains(neighborTile._type))
-            {
-                improvingNeighbors++;
-            }
-        }
+    #region parameters
+    protected float timer; // B
+    public string type; // B
+    public int upkeep; // B
+    public int buildCostMoney;  // B
+    public int buildCostPlanks; // B
+    public float efficiencyValue; // B
+    public float generationInterval; // B
+    public int outputCount; // B
+    public Tile tile; // B
+    public List<Tile.TileTypes> canBeBuiltOnTileTypes; //  public Tile tile; // B
+    #endregion
 
-        if (efficiencyScalesWithNeighboringTiles.Count != 0)
-        {
-            efficiencyValue = improvingNeighbors / minMaxNeighbors;
-        }
+    public abstract void CalculateEfficiency();
+
+    #region Methods   
+    public void WorkerAssignedToBuilding(Worker w)
+    {
+        _workers.Add(w);
     }
 
-    void CallInputOutput()
+    public void WorkerRemovedFromBuilding(Worker w)
     {
-        timer += Time.deltaTime;
-        if (timer > resourceGenerationInterval)
-        {
-            InputOutput();
-            timer -= resourceGenerationInterval;
-        }
+        _workers.Remove(w);
     }
-
-    void InputOutput()
-    {
-        Boolean allInputResourcesAvailable = true;
-        foreach (GameManager.ResourceTypes i in inputResources)
-        {
-            if (!gameManager.HasResourceInWarehoues(i))
-            {
-                allInputResourcesAvailable = false;
-            }
-
-        }
-        if (allInputResourcesAvailable)
-        {
-            foreach (GameManager.ResourceTypes i in inputResources)
-            {
-                gameManager.ChangeResourcesInWarehouse(i, -1);
-            }
-            gameManager.ChangeResourcesInWarehouse(outputResources, (float)Math.Round(efficiencyValue * outputCount, 2));
-        }
-    }
-
-    public void CalculateOutputResource()
-    {
-        switch(type){
-            case "Fishery":
-                outputResources = GameManager.ResourceTypes.Fish;
-                efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Water);
-                break;
-            case "Lumberjack":
-                outputResources = GameManager.ResourceTypes.Wood;
-                efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Forest);
-                break;
-            case "Sawmill":
-                outputResources = GameManager.ResourceTypes.Planks;
-                break;
-            case "Sheep Farm":
-                outputResources = GameManager.ResourceTypes.Wool;
-                efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Grass);
-                break;
-            case "Framework Knitters":
-                outputResources = GameManager.ResourceTypes.Clothes;
-                break;
-            case "Potato Farm":
-                outputResources = GameManager.ResourceTypes.Potato;
-                efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Grass);
-                break;
-            case "Schnapps Distillery":
-                outputResources = GameManager.ResourceTypes.Schnapps;
-                break;
-        }
-    }
+    #endregion
 }

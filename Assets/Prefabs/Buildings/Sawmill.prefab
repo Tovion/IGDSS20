@@ -111,19 +111,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
+  jobManager: {fileID: 0}
+  _workers: []
   type: Sawmill
   upkeep: 10
   buildCostMoney: 100
   buildCostPlanks: 0
-  tile: {fileID: 0}
   efficiencyValue: 1
-  resourceGenerationInterval: 15
+  generationInterval: 15
   outputCount: 2
+  tile: {fileID: 0}
   canBeBuiltOnTileTypes: 030000000400000005000000
   efficiencyScalesWithNeighboringTiles: 
   minMaxNeighbors: 0
   inputResources: 02000000
   outputResources: 3
+  availableJobs: 10
 --- !u!1001 &1910798032428806295
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -110,19 +110,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
+  jobManager: {fileID: 0}
+  _workers:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   type: Sheep Farm
   upkeep: 20
   buildCostMoney: 100
   buildCostPlanks: 2
-  tile: {fileID: 0}
   efficiencyValue: 0
-  resourceGenerationInterval: 30
+  generationInterval: 30
   outputCount: 1
+  tile: {fileID: 0}
   canBeBuiltOnTileTypes: 03000000
   efficiencyScalesWithNeighboringTiles: 
   minMaxNeighbors: 4
   inputResources: 
   outputResources: 4
+  availableJobs: 10
 --- !u!1001 &1744826498747162455
 PrefabInstance:
   m_ObjectHideFlags: 0

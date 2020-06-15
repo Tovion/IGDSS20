@@ -125,19 +125,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
+  jobManager: {fileID: 0}
+  _workers: []
   type: Fishery
   upkeep: 40
   buildCostMoney: 100
   buildCostPlanks: 2
-  tile: {fileID: 0}
   efficiencyValue: 0
-  resourceGenerationInterval: 30
+  generationInterval: 30
   outputCount: 1
+  tile: {fileID: 0}
   canBeBuiltOnTileTypes: 02000000
   efficiencyScalesWithNeighboringTiles: 
   minMaxNeighbors: 3
   inputResources: 
   outputResources: 1
+  availableJobs: 25
 --- !u!1001 &2722606447649755996
 PrefabInstance:
   m_ObjectHideFlags: 0

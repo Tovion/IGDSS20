@@ -124,19 +124,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
+  jobManager: {fileID: 0}
+  _workers: []
   type: Framework Knitters
   upkeep: 50
   buildCostMoney: 400
   buildCostPlanks: 2
-  tile: {fileID: 0}
   efficiencyValue: 0
-  resourceGenerationInterval: 30
+  generationInterval: 30
   outputCount: 1
+  tile: {fileID: 0}
   canBeBuiltOnTileTypes: 030000000400000005000000
   efficiencyScalesWithNeighboringTiles: 
   minMaxNeighbors: 0
   inputResources: 04000000
   outputResources: 5
+  availableJobs: 50
 --- !u!1001 &8183546003434568896
 PrefabInstance:
   m_ObjectHideFlags: 0

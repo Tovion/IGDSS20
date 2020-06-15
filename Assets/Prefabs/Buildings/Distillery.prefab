@@ -112,19 +112,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
+  jobManager: {fileID: 0}
+  _workers: []
   type: Distillery
   upkeep: 40
   buildCostMoney: 100
   buildCostPlanks: 2
-  tile: {fileID: 0}
   efficiencyValue: 0
-  resourceGenerationInterval: 30
+  generationInterval: 30
   outputCount: 1
+  tile: {fileID: 0}
   canBeBuiltOnTileTypes: 030000000400000005000000
   efficiencyScalesWithNeighboringTiles: 
   minMaxNeighbors: 0
   inputResources: 06000000
   outputResources: 7
+  availableJobs: 50
 --- !u!1001 &370928117841390741
 PrefabInstance:
   m_ObjectHideFlags: 0

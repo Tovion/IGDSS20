@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public int currentMoney;
 
+    public JobManager jobManager;
+
     #region Enumerations
     public enum ResourceTypes { None, Fish, Wood, Planks, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types.
     #endregion
@@ -292,19 +294,26 @@ public class GameManager : MonoBehaviour
         if (_selectedBuildingPrefabIndex < _buildingPrefabs.Length)
         {
             Building building = _buildingPrefabs[_selectedBuildingPrefabIndex];
-               
+
             if (BuildingPossible(building, tile))
-            { 
+            {
                 currentMoney -= building.buildCostMoney;
                 ChangeResourcesInWarehouse(ResourceTypes.Planks, -building.buildCostPlanks);
                 building.tile = tile;
-                building.CalculateOutputResource();
                 building.CalculateEfficiency();
                 building.gameManager = this;
+                building.jobManager = jobManager;
                 PlaceBuilding(building, tile);
                 buildings.Add(building);
                 tile._building = building;
+
+                if (building.type != "Residence")
+                {
+                    ProductionBuilding productionBuilding = (ProductionBuilding)building;
+                    productionBuilding.CalculateOutputResource();
+                }
             }
+
         }
     }
 
