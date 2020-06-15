@@ -65,6 +65,7 @@ public class Worker : MonoBehaviour
 
     private void Consume()
     {
+        _consumptionRating = 0;
         if (_gameManager.HasResourceInWarehoues(GameManager.ResourceTypes.Fish))
         {
             _gameManager.ChangeResourcesInWarehouse(GameManager.ResourceTypes.Fish, -1);
@@ -86,9 +87,15 @@ public class Worker : MonoBehaviour
 
     private void CalculateHappiness()
     {
-        // TODO: The happiness depends on _consumptionRating and if the worker is employed / unemployed
+        int hasJob = 0;
+        if (HasJob())
+        {
+            hasJob = 1;
+        }
+        _happiness = (float)(_consumptionRating+ hasJob) / 4;
 
-        _consumptionRating = 0;
+
+
     }
 
     private void Age()

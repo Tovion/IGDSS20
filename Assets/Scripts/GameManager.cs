@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     #region Upkeep
     private float timer;
-    private const float WAIT_TIME_IN_SECONDS = 60f;
+    private const float WAIT_TIME_IN_SECONDS = 6f;
     #endregion
 
     #region Resources for inspector view
@@ -268,6 +268,8 @@ public class GameManager : MonoBehaviour
             {
                 overallUpkeep -= building.upkeep;
             }
+            int totalWorkers = jobManager._occupiedWorkers.Count + jobManager._unoccupiedWorkers.Count;
+            overallUpkeep += 5 * totalWorkers;
             currentMoney += overallUpkeep;
             timer -= WAIT_TIME_IN_SECONDS;
         }

@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class HousingBuilding : Building
 {
@@ -26,22 +27,22 @@ public class HousingBuilding : Building
         worker2._residence = this;
 
         WorkerAssignedToBuilding(worker1);
-       WorkerAssignedToBuilding(worker2);
+        WorkerAssignedToBuilding(worker2);
     }
 
     // Update is called once per frame
     void Update()
     {
         ProduceWorker();
-        UpdateWorker();
+        CalculateEfficiency();
     }
 
     private void ProduceWorker()
     {
         timer += Time.deltaTime;
-        if (timer > generationInterval)
+        if (timer*efficiencyValue > generationInterval)
         {
-            if (efficiencyValue >= 1 && _workers.Count < MAX_CAPACITY)
+            if (_workers.Count < MAX_CAPACITY)
             {
                 SpawnNewWorker();
             }
@@ -50,10 +51,7 @@ public class HousingBuilding : Building
         }
     }
 
-    private void UpdateWorker()
-    {
-        // TODO clean woker list
-    }
+
 
     private void SpawnNewWorker()
     {
@@ -65,12 +63,15 @@ public class HousingBuilding : Building
         worker._residence = this;
 
         WorkerAssignedToBuilding(worker);
-
-        //TODO remove vom building
     }
 
     public override void CalculateEfficiency()
     {
-        // TODO: Calculate the efficiency from the happiness of all workers in this residence
+        float summedHappines = 0f;
+        foreach (Worker w in _workers)
+        {
+            summedHappines +=  w._happiness;
+        }
+        efficiencyValue = summedHappines /_workers.Count;
     }
 }

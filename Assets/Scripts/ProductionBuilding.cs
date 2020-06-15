@@ -18,7 +18,6 @@ public class ProductionBuilding : Building
     public List<Job> jobs = new List<Job>(); // List of all available Jobs. Is populated in Start()
     #endregion
 
-    private int temp = 0;
 
     void Start()
     {
@@ -33,32 +32,35 @@ public class ProductionBuilding : Building
     void Update()
     {
         CallInputOutput();
-        CalculateWorkerEfficiency();
+        CalculateEfficiency();
     }
 
-    private void CalculateWorkerEfficiency()
+    private float  CalculateWorkerEfficiency()
     {
-        // TODO
-
-        if (_workers.Count != temp)
+        wokerEfficiency = (float)  _workers.Count / availableJobs;
+        float summedHappines = 0f;
+        foreach (Worker w in _workers)
         {
-            temp = _workers.Count;
-
-            wokerEfficiency = (float)  _workers.Count / availableJobs;
-
-            //efficiencyValue = efficiencyValue * wokerEfficiency;
+            summedHappines += w._happiness;
         }
+        float averageHappines = 0;
+        if (_workers.Count != 0)
+        {
+            averageHappines = summedHappines / _workers.Count;
+        }
+        Debug.Log("worker EFF" + wokerEfficiency * averageHappines);
+        return wokerEfficiency * averageHappines;
+        
     }
-
-    public override void CalculateEfficiency()
+    public float CalculteTileEfficiency()
     {
-        efficiencyValue = 1;
+        float tileEfficiencyValue = 1;
         var neighborTiles = tile._neighborTiles;
         float improvingNeighbors = 0;
-        
+
         foreach (Tile neighborTile in neighborTiles)
         {
-            if(efficiencyScalesWithNeighboringTiles.Contains(neighborTile._type))
+            if (efficiencyScalesWithNeighboringTiles.Contains(neighborTile._type))
             {
                 improvingNeighbors++;
             }
@@ -66,8 +68,16 @@ public class ProductionBuilding : Building
 
         if (efficiencyScalesWithNeighboringTiles.Count != 0)
         {
-            efficiencyValue = improvingNeighbors / minMaxNeighbors;
+            tileEfficiencyValue = improvingNeighbors / minMaxNeighbors;
         }
+        Debug.Log("tileeff" + tileEfficiencyValue);
+        return tileEfficiencyValue;
+    }
+    public override void CalculateEfficiency()
+    {
+        float tileEfficiencyValue = CalculteTileEfficiency();
+        float workerEficiencyValue = CalculateWorkerEfficiency();
+        efficiencyValue = tileEfficiencyValue * workerEficiencyValue;
     }
 
     private void CallInputOutput()
@@ -97,7 +107,7 @@ public class ProductionBuilding : Building
             {
                 gameManager.ChangeResourcesInWarehouse(i, -1);
             }
-            gameManager.ChangeResourcesInWarehouse(outputResources, (float)Math.Round(efficiencyValue * outputCount, 2));
+            gameManager.ChangeResourcesInWarehouse(outputResources, (float)efficiencyValue * outputCount);
         }
     }
 

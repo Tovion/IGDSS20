@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class JobManager : MonoBehaviour
 {
     private List<Job> _availableJobs = new List<Job>();
     public List<Worker> _unoccupiedWorkers = new List<Worker>();
+    public List<Worker> _occupiedWorkers = new List<Worker>();
 
     #region MonoBehaviour
     // Start is called before the first frame update
@@ -39,13 +41,15 @@ public class JobManager : MonoBehaviour
         {
             if (_availableJobs.Count > 0)
             {
-                var randomIndex = Random.Range(0, _availableJobs.Count - 1);
+                var randomIndex = UnityEngine.Random.Range(0, _availableJobs.Count - 1);
                 var randomJob = _availableJobs[randomIndex];
 
                 randomJob.AssignWorker(_unoccupiedWorkers[0]); // Also assigned worker to building
 
                 _availableJobs.RemoveAt(randomIndex);
+                _occupiedWorkers.Add(_unoccupiedWorkers[0]);
                 _unoccupiedWorkers.RemoveAt(0);
+
             }
         }
     }
@@ -60,7 +64,8 @@ public class JobManager : MonoBehaviour
     public void RemoveWorker(Worker worker)
     {
         _unoccupiedWorkers.Remove(worker);
-        
+        _occupiedWorkers.Remove(worker);
+
         //TODO: remove worker from building (if dead also from residence)
 
         if (worker.HasJob())
@@ -73,6 +78,7 @@ public class JobManager : MonoBehaviour
             _availableJobs.Add(job);
         }
     }
+
 
     #endregion
 }
