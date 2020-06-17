@@ -5,13 +5,10 @@ public class HousingBuilding : Building
 {
     #region Housing Building Parameters
     public const int MAX_CAPACITY = 10;
-    private Vector3 _position;
     #endregion
 
     void Start()
     {
-        _position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-
         var worker1 = InstantiateWorker().GetComponent<Worker>();
         var worker2 = InstantiateWorker().GetComponent<Worker>();
 
@@ -34,7 +31,7 @@ public class HousingBuilding : Building
     private GameObject InstantiateWorker()
     {
         return Instantiate(
-            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Workers/Worker.prefab", typeof(GameObject)), _position, Quaternion.identity);
+            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Workers/Worker.prefab", typeof(GameObject)), transform.position, Quaternion.identity);
     }
 
     private void ProduceWorker()
