@@ -5,12 +5,15 @@ public class HousingBuilding : Building
 {
     #region Housing Building Parameters
     public const int MAX_CAPACITY = 10;
+    private Vector3 _position;
     #endregion
 
     void Start()
     {
-        var worker1 = InstantiateWorker(new Vector3(0, 0, 0)).GetComponent<Worker>();
-        var worker2 = InstantiateWorker(new Vector3(0, 0, 0)).GetComponent<Worker>();
+        _position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+
+        var worker1 = InstantiateWorker().GetComponent<Worker>();
+        var worker2 = InstantiateWorker().GetComponent<Worker>();
 
         worker1.SetAge(15f);
         worker2.SetAge(15f);
@@ -28,10 +31,10 @@ public class HousingBuilding : Building
         CalculateEfficiency();
     }
 
-    private GameObject InstantiateWorker(Vector3 position)
+    private GameObject InstantiateWorker()
     {
         return Instantiate(
-            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Workers/Worker.prefab", typeof(GameObject)), position, Quaternion.identity);
+            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Workers/Worker.prefab", typeof(GameObject)), _position, Quaternion.identity);
     }
 
     private void ProduceWorker()
@@ -55,7 +58,7 @@ public class HousingBuilding : Building
 
     private void SpawnNewWorker()
     {
-        Worker worker = InstantiateWorker(new Vector3(0, 0, 0)).GetComponent<Worker>();
+        var worker = InstantiateWorker().GetComponent<Worker>();
         worker.SetAge(1f);
         worker.SetResidence(this);
         WorkerAssignedToBuilding(worker);
