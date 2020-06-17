@@ -3598,11 +3598,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _jobManager: {fileID: 0}
   _gameManager: {fileID: 0}
-  x: {fileID: 0}
   _age: 0
   _happiness: 0
-  _consumeInterval: 0
+  _consumeIntervalInSecs: 180
   _consumptionRating: 0
+  _residence: {fileID: 0}
 --- !u!1 &8432426330796557036
 GameObject:
   m_ObjectHideFlags: 0

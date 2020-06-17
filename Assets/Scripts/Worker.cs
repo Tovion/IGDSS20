@@ -16,7 +16,7 @@ public class Worker : MonoBehaviour
     public float _happiness; // The happiness of this worker
 
     private float _consumptionTimer;
-    public int _consumeInterval; // The interval how often a worker consumes resources (fish, clothes, schnapps)
+    public int _consumeIntervalInSecs; // The interval how often a worker consumes resources (fish, clothes, schnapps)
     public int _consumptionRating; // Is a one of the values (0, 1, 2, 3) and shows how much a worker is satisfied by resource consumption
 
     public Job _job;
@@ -56,10 +56,10 @@ public class Worker : MonoBehaviour
     private void ConsumeResources()
     {
         _consumptionTimer += Time.deltaTime;
-        if (_consumptionTimer > _consumeInterval)
+        if (_consumptionTimer > _consumeIntervalInSecs)
         {
             Consume();
-            _consumptionTimer -= _consumeInterval;
+            _consumptionTimer -= _consumeIntervalInSecs;
         }
     }
 
@@ -68,19 +68,19 @@ public class Worker : MonoBehaviour
         _consumptionRating = 0;
         if (_gameManager.HasResourceInWarehoues(GameManager.ResourceTypes.Fish))
         {
-            _gameManager.ChangeResourcesInWarehouse(GameManager.ResourceTypes.Fish, -1);
+            _gameManager.ChangeResourcesInWarehouse(GameManager.ResourceTypes.Fish, -0.1f);
             _consumptionRating++;
         }
 
         if (_gameManager.HasResourceInWarehoues(GameManager.ResourceTypes.Clothes))
         {
-            _gameManager.ChangeResourcesInWarehouse(GameManager.ResourceTypes.Clothes, -1);
+            _gameManager.ChangeResourcesInWarehouse(GameManager.ResourceTypes.Clothes, -0.1f);
             _consumptionRating++;
         }
 
         if (_gameManager.HasResourceInWarehoues(GameManager.ResourceTypes.Schnapps))
         {
-            _gameManager.ChangeResourcesInWarehouse(GameManager.ResourceTypes.Clothes, -1);
+            _gameManager.ChangeResourcesInWarehouse(GameManager.ResourceTypes.Clothes, -0.1f);
             _consumptionRating++;
         }
     }
@@ -111,13 +111,13 @@ public class Worker : MonoBehaviour
             is15 = false;
         }
 
-        if (_age > 17 && is65)
+        if (_age > 67 && is65)
         {
             Retire();
             is65 = false;
         }
 
-        if (_age > 20 && is101)
+        if (_age > 100 && is101)
         {
             Die();
             is101 = false;

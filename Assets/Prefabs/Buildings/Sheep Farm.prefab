@@ -111,17 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
   jobManager: {fileID: 0}
-  _workers:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  _workers: []
   type: Sheep Farm
   upkeep: 20
   buildCostMoney: 100
@@ -136,6 +126,7 @@ MonoBehaviour:
   inputResources: 
   outputResources: 4
   availableJobs: 10
+  wokerEfficiency: 1
 --- !u!1001 &1744826498747162455
 PrefabInstance:
   m_ObjectHideFlags: 0

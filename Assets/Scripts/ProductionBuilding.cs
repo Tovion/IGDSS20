@@ -38,19 +38,18 @@ public class ProductionBuilding : Building
     private float  CalculateWorkerEfficiency()
     {
         wokerEfficiency = (float)  _workers.Count / availableJobs;
-        float summedHappines = 0f;
+        float summedHappiness = 0f;
         foreach (Worker w in _workers)
         {
-            summedHappines += w._happiness;
+            summedHappiness += w._happiness;
         }
         float averageHappines = 0;
         if (_workers.Count != 0)
         {
-            averageHappines = summedHappines / _workers.Count;
+            averageHappines = summedHappiness / _workers.Count;
         }
-        Debug.Log("worker EFF" + wokerEfficiency * averageHappines);
+     
         return wokerEfficiency * averageHappines;
-        
     }
     public float CalculteTileEfficiency()
     {

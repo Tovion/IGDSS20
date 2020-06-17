@@ -51,8 +51,6 @@ public class HousingBuilding : Building
         }
     }
 
-
-
     private void SpawnNewWorker()
     {
         var workerGameObject = Instantiate(

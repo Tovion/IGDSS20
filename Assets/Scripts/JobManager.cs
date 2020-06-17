@@ -66,8 +66,6 @@ public class JobManager : MonoBehaviour
         _unoccupiedWorkers.Remove(worker);
         _occupiedWorkers.Remove(worker);
 
-        //TODO: remove worker from building (if dead also from residence)
-
         if (worker.HasJob())
         {
             Job job = worker._job;
