@@ -63,7 +63,7 @@ public class HousingBuilding : Building
 
     public override void CalculateEfficiency()
     {
-        float summedHappiness = 0f;
+        var summedHappiness = 0f;
         foreach (var worker in _workers)
         {
             summedHappiness += worker._happiness;
