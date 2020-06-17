@@ -1,29 +1,23 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Job
+﻿public class Job
 {
     public Worker _worker; //The worker occupying this job
     public Building _building; //The building offering the job
 
-    //Constructor. Call new Job(this) from the Building script to instanciate a job
     public Job(ProductionBuilding building)
     {
         _building = building;
     }
 
-    public void AssignWorker(Worker w)
+    public void AssignWorker(Worker worker)
     {
-        _worker = w;
-        _worker._job = this;
-        _building.WorkerAssignedToBuilding(w);
+        _worker = worker;
+        _worker.SetJob(this);
+        _building.WorkerAssignedToBuilding(_worker);
     }
 
-    public void RemoveWorker(Worker w)
+    public void RemoveWorker(Worker worker)
     {
-        _worker = w;
-        _building.WorkerRemovedFromBuilding(w);
+        _worker = worker;
+        _building.WorkerRemovedFromBuilding(_worker);
     }
 }

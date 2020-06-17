@@ -1,29 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ProductionBuilding : Building
 {
-    #region parameters
-    public List<Tile.TileTypes> efficiencyScalesWithNeighboringTiles; // P
-    public int minMaxNeighbors; // P
-    public List<GameManager.ResourceTypes> inputResources; //P
-    public GameManager.ResourceTypes outputResources; //P
+    #region Production Building Parameters
+    public List<Tile.TileTypes> efficiencyScalesWithNeighboringTiles;
+    public int minMaxNeighbors;
+    public List<GameManager.ResourceTypes> inputResources;
+    public GameManager.ResourceTypes outputResources;
     public int availableJobs;
     public float wokerEfficiency;
-    #endregion
-
-    #region Jobs
     public List<Job> jobs = new List<Job>(); // List of all available Jobs. Is populated in Start()
     #endregion
 
-
     void Start()
     {
-        for (int i = 0; i < availableJobs; i++)
+        InitAvailableJobs();
+    }
+
+    private void InitAvailableJobs()
+    {
+        for (var i = 0; i < availableJobs; i++)
         {
-            Job job = new Job(this);
+            var job = new Job(this);
             jobs.Add(job);
             jobManager.AddJob(job);
         }
@@ -37,27 +36,30 @@ public class ProductionBuilding : Building
 
     private float  CalculateWorkerEfficiency()
     {
+        var summedHappiness = 0f;
+        var averageHappiness = 0f;
+
         wokerEfficiency = (float)  _workers.Count / availableJobs;
-        float summedHappiness = 0f;
-        foreach (Worker w in _workers)
+    
+        foreach (var worker in _workers)
         {
-            summedHappiness += w._happiness;
+            summedHappiness += worker._happiness;
         }
-        float averageHappines = 0;
+    
         if (_workers.Count != 0)
         {
-            averageHappines = summedHappiness / _workers.Count;
+            averageHappiness = summedHappiness / _workers.Count;
         }
      
-        return wokerEfficiency * averageHappines;
+        return wokerEfficiency * averageHappiness;
     }
-    public float CalculteTileEfficiency()
+    public float CalculateTileEfficiency()
     {
-        float tileEfficiencyValue = 1;
+        var tileEfficiencyValue = 1;
         var neighborTiles = tile._neighborTiles;
-        float improvingNeighbors = 0;
+        var improvingNeighbors = 0;
 
-        foreach (Tile neighborTile in neighborTiles)
+        foreach (var neighborTile in neighborTiles)
         {
             if (efficiencyScalesWithNeighboringTiles.Contains(neighborTile._type))
             {
@@ -69,14 +71,14 @@ public class ProductionBuilding : Building
         {
             tileEfficiencyValue = improvingNeighbors / minMaxNeighbors;
         }
-        Debug.Log("tileeff" + tileEfficiencyValue);
+      
         return tileEfficiencyValue;
     }
     public override void CalculateEfficiency()
     {
-        float tileEfficiencyValue = CalculteTileEfficiency();
-        float workerEficiencyValue = CalculateWorkerEfficiency();
-        efficiencyValue = tileEfficiencyValue * workerEficiencyValue;
+        var tileEfficiencyValue = CalculateTileEfficiency();
+        var workerEfficiencyValue = CalculateWorkerEfficiency();
+        efficiencyValue = tileEfficiencyValue * workerEfficiencyValue;
     }
 
     private void CallInputOutput()
@@ -91,7 +93,7 @@ public class ProductionBuilding : Building
 
     private void InputOutput()
     {
-        bool allInputResourcesAvailable = true;
+        var allInputResourcesAvailable = true;
         foreach (GameManager.ResourceTypes i in inputResources)
         {
             if (!gameManager.HasResourceInWarehoues(i))
@@ -104,9 +106,9 @@ public class ProductionBuilding : Building
         {
             foreach (GameManager.ResourceTypes i in inputResources)
             {
-                gameManager.ChangeResourcesInWarehouse(i, -1);
+                gameManager.ChangeResourcesInWarehouse(i, -1f);
             }
-            gameManager.ChangeResourcesInWarehouse(outputResources, (float)efficiencyValue * outputCount);
+            gameManager.ChangeResourcesInWarehouse(outputResources, efficiencyValue * outputCount);
         }
     }
 

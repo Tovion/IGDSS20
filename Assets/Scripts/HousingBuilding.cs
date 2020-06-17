@@ -1,40 +1,37 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class HousingBuilding : Building
 {
+    #region Housing Building Parameters
     public const int MAX_CAPACITY = 10;
+    #endregion
 
-    // Start is called before the first frame update
     void Start()
     {
-        var worker1GameObject = Instantiate(
-            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Workers/Worker.prefab", typeof(GameObject)),
-            new Vector3(0, 0, 0), Quaternion.identity);
-
-        var worker2GameObject = Instantiate(
-            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Workers/Worker.prefab", typeof(GameObject)),
-            new Vector3(0, 0, 0), Quaternion.identity);
-
-        Worker worker1 = worker1GameObject.GetComponent<Worker>();
-        Worker worker2 = worker2GameObject.GetComponent<Worker>();
+        var worker1 = InstantiateWorker(new Vector3(0, 0, 0)).GetComponent<Worker>();
+        var worker2 = InstantiateWorker(new Vector3(0, 0, 0)).GetComponent<Worker>();
 
         worker1.SetAge(15f);
         worker2.SetAge(15f);
 
-        worker1._residence = this;
-        worker2._residence = this;
+        worker1.SetResidence(this);
+        worker2.SetResidence(this);
 
         WorkerAssignedToBuilding(worker1);
         WorkerAssignedToBuilding(worker2);
     }
 
-    // Update is called once per frame
     void Update()
     {
         ProduceWorker();
         CalculateEfficiency();
+    }
+
+    private GameObject InstantiateWorker(Vector3 position)
+    {
+        return Instantiate(
+            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Workers/Worker.prefab", typeof(GameObject)), position, Quaternion.identity);
     }
 
     private void ProduceWorker()
@@ -42,7 +39,7 @@ public class HousingBuilding : Building
         timer += Time.deltaTime;
         if (timer*efficiencyValue > generationInterval)
         {
-            if (_workers.Count < MAX_CAPACITY)
+            if (RoomAvailable())
             {
                 SpawnNewWorker();
             }
@@ -51,25 +48,26 @@ public class HousingBuilding : Building
         }
     }
 
+    private bool RoomAvailable()
+    {
+        return _workers.Count < MAX_CAPACITY;
+    }
+
     private void SpawnNewWorker()
     {
-        var workerGameObject = Instantiate(
-            (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Workers/Worker.prefab", typeof(GameObject)),
-            new Vector3(0, 0, 0), Quaternion.identity);
-
-        Worker worker = workerGameObject.GetComponent<Worker>();
-        worker._residence = this;
-
+        Worker worker = InstantiateWorker(new Vector3(0, 0, 0)).GetComponent<Worker>();
+        worker.SetAge(1f);
+        worker.SetResidence(this);
         WorkerAssignedToBuilding(worker);
     }
 
     public override void CalculateEfficiency()
     {
-        float summedHappines = 0f;
-        foreach (Worker w in _workers)
+        float summedHappiness = 0f;
+        foreach (var worker in _workers)
         {
-            summedHappines +=  w._happiness;
+            summedHappiness += worker._happiness;
         }
-        efficiencyValue = summedHappines /_workers.Count;
+        efficiencyValue = summedHappiness /_workers.Count;
     }
 }
