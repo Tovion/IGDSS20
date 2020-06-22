@@ -11,6 +11,7 @@ public class ProductionBuilding : Building
     public int availableJobs;
     public float wokerEfficiency;
     public List<Job> jobs = new List<Job>(); // List of all available Jobs. Is populated in Start()
+    
     #endregion
 
     void Start()

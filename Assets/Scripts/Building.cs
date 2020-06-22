@@ -23,6 +23,8 @@ public abstract class Building : MonoBehaviour
     public int outputCount; //The amount of the output (resources or workers)
     public Tile tile; //Both building types are build upon a tile
     public List<Tile.TileTypes> canBeBuiltOnTileTypes; //Both building types can only build on certain tiles (e.g. not on water etc.) 
+    public int[,] potentialFieldMap;
+
     #endregion
 
     public abstract void CalculateEfficiency();
@@ -31,6 +33,7 @@ public abstract class Building : MonoBehaviour
     public void WorkerAssignedToBuilding(Worker worker)
     {
         _workers.Add(worker);
+        worker.SetWorkplace(this);
     }
 
     public void WorkerRemovedFromBuilding(Worker worker)

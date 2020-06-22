@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Threading;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Worker : MonoBehaviour
 {
@@ -26,7 +29,10 @@ public class Worker : MonoBehaviour
 
     private Job _job; //Reference to the job if he has one
     private Building _residence; //Reference to the building where the worker lives
+    private Building _workplace; //Reference to the building where the worker works
     public float _happiness; //The happiness of this worker
+    float timer = 0f;
+    float generationInterval = 0f;
 
     void Start()
     {
@@ -39,13 +45,67 @@ public class Worker : MonoBehaviour
         _jobManager = GameObject.Find("JobManager").GetComponent<JobManager>();
     }
 
+
     void Update()
     {
         Age();
         ConsumeResources();
         CalculateHappiness();
+        moveWorker();
+    }
+    void moveWorker()
+    {
+         if (transform.position == _residence.transform.position)
+        {
+            timer += Time.deltaTime;
+            if (timer > generationInterval)
+            {
+                move(_residence,_workplace);
+                timer -= generationInterval;
+            }
+        }
+        else
+        {
+            timer += Time.deltaTime;
+            if (timer > generationInterval)
+            {
+                move(_workplace,_residence);
+                timer -= generationInterval;
+            }
+        }
+
     }
 
+    private void move(Building origin,Building goal)
+    {
+        int[,] mapOrigin = origin.potentialFieldMap;
+        int[,] mapGoal = origin.potentialFieldMap;
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                if (mapOrigin[i,j]== 0)
+                {
+                    int orix = i;
+                    int oriy = j;
+                }
+            }
+        }
+
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                if (mapGoal[i, j] == 0)
+                {
+                    int goalx = i;
+                    int goaly = j;
+                }
+            }
+        }
+
+
+    }
 
     private void ConsumeResources()
     {
@@ -151,6 +211,10 @@ public class Worker : MonoBehaviour
     public void SetResidence(Building residence)
     {
         _residence = residence;
+    }
+    public void SetWorkplace(Building workplace)
+    {
+        _workplace = workplace;
     }
 
     public void SetJob(Job job)

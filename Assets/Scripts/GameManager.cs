@@ -8,14 +8,14 @@ public class GameManager : MonoBehaviour
     public int currentMoney;
 
     public JobManager jobManager;
-
+    public NavigationManager navman;
     #region Enumerations
     public enum ResourceTypes { None, Fish, Wood, Planks, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types.
     #endregion
 
     #region Map generation
     public Texture2D mapTexture;
-    private Tile[,] _tileMap; //2D array of all spawned tiles
+    public Tile[,] _tileMap; //2D array of all spawned tiles
     #endregion
 
     #region Resources
@@ -353,6 +353,7 @@ public class GameManager : MonoBehaviour
         var buildPosY = tile.transform.position.y + building.transform.position.y;
         var buildPosZ = tile.transform.position.z + building.transform.position.z;
 
+        navman.calculatePotentialFields(building);
         Instantiate(
             (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Buildings/" + building.type + ".prefab", typeof(GameObject)),
             new Vector3(buildPosX, buildPosY, buildPosZ), building.transform.rotation);
