@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
+
 
 public class NavigationManager : MonoBehaviour
 {
@@ -61,7 +60,26 @@ public class NavigationManager : MonoBehaviour
 
         }
         building.potentialFieldMap = potentialFieldMap;
+
+        DebugPrintPretty(potentialFieldMap, tileMap);
     }
+
+    private void DebugPrintPretty(int[,] potentialField, Tile[,] tileMap)
+    {
+        var len = gm.GetMapSize();
+        var x = "";
+
+        for (var i = 0; i < len; i++)
+        {
+            for (var j = 0; j < len; j++)
+            {
+                x += "(" + tileMap[i,j]._type.ToString().Substring(0, 4) + " " + potentialField[i, j] + ")   ";
+            }
+            Debug.Log(x);
+            x = "";
+        }
+    }
+
     int[,] calculatePotentials(Tile[,] tileMap, int x , int y, int[,] fieldMap, List<string> usedPos)
     {
         int mapsize = gm.GetMapSize();
