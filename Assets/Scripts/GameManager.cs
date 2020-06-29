@@ -306,6 +306,8 @@ public class GameManager : MonoBehaviour
                 building.gameManager = this;
                 building.jobManager = jobManager;
                 PlaceBuilding(building, tile);
+                building.potentialFieldMap = navman.calculatePotentialFields(building);
+                Debug.Log("gamemanager calculated: " + building.potentialFieldMap.Length);
                 buildings.Add(building);
                 tile._building = building;
 
@@ -353,7 +355,7 @@ public class GameManager : MonoBehaviour
         var buildPosY = tile.transform.position.y + building.transform.position.y;
         var buildPosZ = tile.transform.position.z + building.transform.position.z;
 
-        navman.calculatePotentialFields(building);
+
         Instantiate(
             (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Buildings/" + building.type + ".prefab", typeof(GameObject)),
             new Vector3(buildPosX, buildPosY, buildPosZ), building.transform.rotation);

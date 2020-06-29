@@ -7,6 +7,8 @@ public class JobManager : MonoBehaviour
     public List<Worker> _unoccupiedWorkers = new List<Worker>();
     public List<Worker> _occupiedWorkers = new List<Worker>();
 
+    public NavigationManager navman;
+
     #region MonoBehaviour
     void Update()
     {
@@ -29,6 +31,14 @@ public class JobManager : MonoBehaviour
                 var randomIndex = Random.Range(0, _availableJobs.Count - 1);
                 var randomJob = _availableJobs[randomIndex];
                 randomJob.AssignWorker(_unoccupiedWorkers[0]); //Also assigns worker to building
+                Building  b= randomJob._building;
+                //b.potentialFieldMap = navman.calculatePotentialFields(b);
+                _unoccupiedWorkers[0].SetWorkplace(b);
+                /*
+                Building r = _unoccupiedWorkers[0]._residence;
+                r.potentialFieldMap = navman.calculatePotentialFields(r);
+                _unoccupiedWorkers[0].SetResidence(r);
+                */
                 _availableJobs.RemoveAt(randomIndex);
                 _occupiedWorkers.Add(_unoccupiedWorkers[0]);
                 _unoccupiedWorkers.RemoveAt(0);

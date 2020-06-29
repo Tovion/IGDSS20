@@ -33,7 +33,6 @@ public abstract class Building : MonoBehaviour
     public void WorkerAssignedToBuilding(Worker worker)
     {
         _workers.Add(worker);
-        worker.SetWorkplace(this);
     }
 
     public void WorkerRemovedFromBuilding(Worker worker)

@@ -18,6 +18,7 @@ public class HousingBuilding : Building
         worker1.SetResidence(this);
         worker2.SetResidence(this);
 
+
         WorkerAssignedToBuilding(worker1);
         WorkerAssignedToBuilding(worker2);
     }

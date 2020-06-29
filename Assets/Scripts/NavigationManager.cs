@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 
@@ -15,7 +16,7 @@ public class NavigationManager : MonoBehaviour
     {
         
     }
-    public void calculatePotentialFields(Building building)
+    public int[,] calculatePotentialFields(Building building)
     {
         Tile[,] tileMap = gm._tileMap;
         int mapsize = gm.GetMapSize();
@@ -36,10 +37,10 @@ public class NavigationManager : MonoBehaviour
                 }
             }
         }
-        potentialFieldMap[ourposx, ourposy] = 0;
         usedPositions.Add(ourposx+""+ ourposy);
 
         potentialFieldMap = calculatePotentials(tileMap, ourposx, ourposy, potentialFieldMap, usedPositions);
+        
         while (usedPositions.Count < mapsize * mapsize)
         {
             int lowestvalue = 10000;
@@ -47,7 +48,7 @@ public class NavigationManager : MonoBehaviour
             {
                 for (int j = 0; j < mapsize; j++)
                 {
-                    if (potentialFieldMap[i,j] != 0&& potentialFieldMap[i,j] < lowestvalue && !usedPositions.Contains(i + "" + j))
+                    if (potentialFieldMap[i,j] != 0 && potentialFieldMap[i,j] < lowestvalue && !usedPositions.Contains(i + " " + j))
                     {
                         lowestvalue = potentialFieldMap[i, j];
                         ourposx = i;
@@ -56,12 +57,12 @@ public class NavigationManager : MonoBehaviour
                 }
             }
             potentialFieldMap = calculatePotentials(tileMap, ourposx, ourposy, potentialFieldMap, usedPositions);
-            usedPositions.Add(ourposx + "" + ourposy);
+            usedPositions.Add(ourposx + " " + ourposy);
 
         }
-        building.potentialFieldMap = potentialFieldMap;
-
-        DebugPrintPretty(potentialFieldMap, tileMap);
+        //building.potentialFieldMap = potentialFieldMap;
+        //DebugPrintPretty(potentialFieldMap, tileMap);
+        return potentialFieldMap;
     }
 
     private void DebugPrintPretty(int[,] potentialField, Tile[,] tileMap)
@@ -73,7 +74,7 @@ public class NavigationManager : MonoBehaviour
         {
             for (var j = 0; j < len; j++)
             {
-                x += "(" + tileMap[i,j]._type.ToString().Substring(0, 4) + " " + potentialField[i, j] + ")   ";
+                x += "(" + tileMap[i,j]._type.ToString().Substring(0, 4) + " " + potentialField[i, j] + " i: "+i + " j: " + j +" )   ";
             }
             Debug.Log(x);
             x = "";
@@ -84,43 +85,44 @@ public class NavigationManager : MonoBehaviour
     {
         int mapsize = gm.GetMapSize();
         int currentPot = fieldMap[x, y];
-        if(x < mapsize-1 && !usedPos.Contains((x+1) + ""+y))
+        if(x < mapsize-1 && !usedPos.Contains((x+1) + " "+y))
         {
             fieldMap[x+1, y] = currentPot + calculateWeight(tileMap[x + 1, y]); 
         }
-        if (x > 0 && !usedPos.Contains((x - 1) + "" + y))
+        if (x > 0 && !usedPos.Contains((x - 1) + " " + y))
         {
             fieldMap[x - 1, y] = currentPot + calculateWeight(tileMap[x - 1, y]); 
         }
 
-        if (y < mapsize-1 && !usedPos.Contains(x  + "" + (y+1)))
+        if (y < mapsize-1 && !usedPos.Contains(x  + " " + (y+1)))
         {
             fieldMap[x, y+1] = currentPot + calculateWeight(tileMap[x, y+1]); 
         }
-        if (y > 0 && !usedPos.Contains(x  + "" + (y-1)))
+        if (y > 0 && !usedPos.Contains(x  + " " + (y-1)))
         {
             fieldMap[x, y-1] = currentPot + calculateWeight(tileMap[x, y-1]); 
         }
 
-        if (y > 0 && x>0 && !usedPos.Contains((x - 1) + "" + (y-1)))
+        if (y > 0 && x>0 && !usedPos.Contains((x - 1) + " " + (y-1)))
         {
             fieldMap[x-1, y - 1] = currentPot + calculateWeight(tileMap[x-1, y - 1]); 
         }
 
-        if (y > 0 && x < mapsize-1 && !usedPos.Contains((x + 1) + "" + (y-1)))
+        if (y > 0 && x < mapsize-1 && !usedPos.Contains((x + 1) + " " + (y-1)))
         {
             fieldMap[x + 1, y - 1] = currentPot + calculateWeight(tileMap[x + 1, y - 1]); 
         }
 
-        if (y < mapsize-1 && x > 0 && !usedPos.Contains((x - 1) + "" + (y+1)))
+        if (y < mapsize-1 && x > 0 && !usedPos.Contains((x - 1) + " " + (y+1)))
         {
             fieldMap[x - 1, y + 1] = currentPot + calculateWeight(tileMap[x - 1, y + 1]); 
         }
 
-        if (y < mapsize -1&& x < mapsize-1 && !usedPos.Contains((x + 1) + "" + (y+1)))
+        if (y < mapsize -1&& x < mapsize-1 && !usedPos.Contains((x + 1) + " " + (y+1)))
         {
             fieldMap[x + 1, y + 1] = currentPot + calculateWeight(tileMap[x + 1, y + 1]); 
         }
+        
         return fieldMap;
     }
     int calculateWeight(Tile tile)
