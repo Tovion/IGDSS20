@@ -28,11 +28,11 @@ public class Worker : MonoBehaviour
     #endregion
 
     private Job _job; //Reference to the job if he has one
-    private Building _residence; //Reference to the building where the worker lives
-    private Building _workplace; //Reference to the building where the worker works
+    public  Building _residence; //Reference to the building where the worker lives
+    public Building _workplace; //Reference to the building where the worker works
     public float _happiness; //The happiness of this worker
     float timer = 0f;
-    float generationInterval = 0f;
+    float commuteInterval = 10f;
 
     void Start()
     {
@@ -55,56 +55,172 @@ public class Worker : MonoBehaviour
     }
     void moveWorker()
     {
-         if (transform.position == _residence.transform.position)
+        if (_workplace != null)
         {
-            timer += Time.deltaTime;
-            if (timer > generationInterval)
+           // Debug.Log("workplace exists" + _workplace.potentialFieldMap);
+            if (_workplace.potentialFieldMap != null)
             {
-                move(_residence,_workplace);
-                timer -= generationInterval;
-            }
-        }
-        else
-        {
-            timer += Time.deltaTime;
-            if (timer > generationInterval)
-            {
-                move(_workplace,_residence);
-                timer -= generationInterval;
-            }
-        }
+                Debug.Log("fieldmap exists");
 
-    }
-
-    private void move(Building origin,Building goal)
-    {
-        int[,] mapOrigin = origin.potentialFieldMap;
-        int[,] mapGoal = origin.potentialFieldMap;
-        for (int i = 0; i < 16; i++)
-        {
-            for (int j = 0; j < 16; j++)
-            {
-                if (mapOrigin[i,j]== 0)
                 {
-                    int orix = i;
-                    int oriy = j;
+
+                    if (transform.position == _residence.transform.position)
+                    {
+                        timer += Time.deltaTime;
+                        if (timer > commuteInterval)
+                        {
+                            move(_residence, _workplace);
+                            timer -= commuteInterval;
+                        }
+                    }
+                    else
+                    {
+                        timer += Time.deltaTime;
+                        if (timer > commuteInterval)
+                        {
+                            move(_workplace, _residence);
+                            timer -= commuteInterval;
+                        }
+                    }
                 }
             }
         }
 
+    }
+    private void physicalMove(Tuple<int, int> workerPos)
+    {
+        Tile[,] _tileMap = _gameManager._tileMap;
+        Tile tile = _tileMap[workerPos.Item1, workerPos.Item2];
+        this.transform.position = new Vector3(tile.transform.position.x,tile.transform.position.y,tile.transform.position.z);
+    }
+    private void move(Building origin,Building goal)
+    {
+        int[,] mapOrigin = origin.potentialFieldMap;
+        int[,] mapGoal = goal.potentialFieldMap;
+        int goalx = 0;
+        int goaly = 0;
         for (int i = 0; i < 16; i++)
         {
             for (int j = 0; j < 16; j++)
             {
                 if (mapGoal[i, j] == 0)
                 {
-                    int goalx = i;
-                    int goaly = j;
+                    goalx = i;
+                    goaly = j;
                 }
             }
         }
+        int orix = 0;
+        int oriy = 0;
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                if (mapOrigin[i, j] == 0)
+                {
+                    orix = i;
+                    oriy = j;
+                }
+            }
+        }
+        Tuple<int, int> workerPos = new Tuple<int, int>(orix, oriy);
+        Tuple<int, int> goalPos = new Tuple<int, int>(goalx, goaly);
+        while (workerPos != goalPos)
+        {
+            workerPos = findBestNextStep(workerPos, mapGoal);
+            physicalMove(workerPos);
+        }
+        //TODO breitensuche um besten weg von orix und oriy zu goalx und goaly zu finden.
 
 
+    }
+
+    private Tuple<int, int> findBestNextStep(Tuple<int, int> workerPos, int[,] mapGoal)
+    {
+        int x = workerPos.Item1;
+        int y = workerPos.Item2;
+        int mapsize = _gameManager.GetMapSize();
+        int lowestPot = 1000;
+
+        Tuple<int, int> newWorkerPos = new Tuple<int, int>(x, y);
+        if (x < mapsize)
+        {
+            if(mapGoal[x+1,y] < lowestPot)
+            {
+                lowestPot = mapGoal[x + 1, y];
+                Tuple<int, int> newWorkerPos2 = new Tuple<int, int>(x+1, y);
+                newWorkerPos = newWorkerPos2;
+            }
+        }
+        if (x > 0 )
+        {
+            if (mapGoal[x - 1, y] < lowestPot)
+            {
+                lowestPot = mapGoal[x - 1, y];
+                Tuple<int, int> newWorkerPos2 = new Tuple<int, int>(x - 1, y);
+                newWorkerPos = newWorkerPos2;
+            }
+        }
+
+        if (y < mapsize - 1 )
+        {
+            if (mapGoal[x, y+1] < lowestPot)
+            {
+                lowestPot = mapGoal[x, y+1];
+                Tuple<int, int> newWorkerPos2 = new Tuple<int, int>(x, y+1);
+                newWorkerPos = newWorkerPos2;
+            }
+        }
+        if (y > 0)
+        {
+            if (mapGoal[x, y - 1] < lowestPot)
+            {
+                lowestPot = mapGoal[x, y - 1];
+                Tuple<int, int> newWorkerPos2 = new Tuple<int, int>(x, y - 1);
+                newWorkerPos = newWorkerPos2;
+            }
+        }
+
+        if (y > 0 && x > 0)
+        {
+            if (mapGoal[x-1, y - 1] < lowestPot)
+            {
+                lowestPot = mapGoal[x-1, y - 1];
+                Tuple<int, int> newWorkerPos2 = new Tuple<int, int>(x-1, y - 1);
+                newWorkerPos = newWorkerPos2;
+            }
+        }
+
+        if (y > 0 && x < mapsize - 1)
+        {
+            if (mapGoal[x-1, y + 1] < lowestPot)
+            {
+                lowestPot = mapGoal[x-1, y + 1];
+                Tuple<int, int> newWorkerPos2 = new Tuple<int, int>(x-1, y + 1);
+                newWorkerPos = newWorkerPos2;
+            }
+        }
+
+        if (y < mapsize - 1 && x > 0 )
+        {
+            if (mapGoal[x+1, y - 1] < lowestPot)
+            {
+                lowestPot = mapGoal[x+1, y - 1];
+                Tuple<int, int> newWorkerPos2 = new Tuple<int, int>(x+1, y - 1);
+                newWorkerPos = newWorkerPos2;
+            }
+        }
+
+        if (y < mapsize - 1 && x < mapsize - 1 )
+        {
+            if (mapGoal[x+1, y + 1] < lowestPot)
+            {
+                lowestPot = mapGoal[x+1, y +1 ];
+                Tuple<int, int> newWorkerPos2 = new Tuple<int, int>(x+1, y + 1);
+                newWorkerPos = newWorkerPos2;
+            }
+        }
+        return newWorkerPos;
     }
 
     private void ConsumeResources()
@@ -214,7 +330,9 @@ public class Worker : MonoBehaviour
     }
     public void SetWorkplace(Building workplace)
     {
+        Debug.Log(workplace.potentialFieldMap.Length);
         _workplace = workplace;
+
     }
 
     public void SetJob(Job job)
