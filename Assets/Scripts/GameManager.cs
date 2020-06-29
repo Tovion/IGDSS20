@@ -288,7 +288,11 @@ public class GameManager : MonoBehaviour
         Tile tile = _tileMap[height, width];
         PlaceBuildingOnTile(tile);
     }
+    public void calculatePotentialFields(Building building)
+    {
+        building.potentialFieldMap = navman.calculatePotentialFields(building);
 
+    }
     //Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
     private void PlaceBuildingOnTile(Tile tile)
     {

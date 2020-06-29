@@ -37,6 +37,9 @@ public class Worker : MonoBehaviour
     void Start()
     {
         InitManagers();
+
+        _gameManager.calculatePotentialFields(_residence);
+        Debug.Log(_residence.potentialFieldMap.Length);
     }
 
     private void InitManagers()
@@ -57,11 +60,8 @@ public class Worker : MonoBehaviour
     {
         if (_workplace != null)
         {
-           // Debug.Log("workplace exists" + _workplace.potentialFieldMap);
             if (_workplace.potentialFieldMap != null)
             {
-                Debug.Log("fieldmap exists");
-
                 {
 
                     if (transform.position == _residence.transform.position)
@@ -330,8 +330,9 @@ public class Worker : MonoBehaviour
     }
     public void SetWorkplace(Building workplace)
     {
-        Debug.Log(workplace.potentialFieldMap.Length);
         _workplace = workplace;
+        _gameManager.calculatePotentialFields(_workplace);
+        Debug.Log(_workplace.potentialFieldMap.Length);
 
     }
 
