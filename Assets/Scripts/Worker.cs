@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Tracing;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -62,7 +63,7 @@ public class Worker : MonoBehaviour
         {
             if (_workplace.potentialFieldMap != null)
             {
-                {
+                
 
                     if (transform.position == _residence.transform.position)
                     {
@@ -82,7 +83,7 @@ public class Worker : MonoBehaviour
                             timer -= commuteInterval;
                         }
                     }
-                }
+                
             }
         }
 
@@ -91,10 +92,26 @@ public class Worker : MonoBehaviour
     {
         Tile[,] _tileMap = _gameManager._tileMap;
         Tile tile = _tileMap[workerPos.Item1, workerPos.Item2];
-        this.transform.position = new Vector3(tile.transform.position.x,tile.transform.position.y,tile.transform.position.z);
+        this.transform.position =new Vector3(tile.transform.position.x,tile.transform.position.y,tile.transform.position.z);
+    }
+    private void DebugPrintPretty(int[,] potentialField, Tile[,] tileMap)
+    {
+        var len = _gameManager.GetMapSize();
+        var x = "";
+
+        for (var i = 0; i < len; i++)
+        {
+            for (var j = 0; j < len; j++)
+            {
+                x += "(" + tileMap[i, j]._type.ToString().Substring(0, 4) + " " + potentialField[i, j] + " i: " + i + " j: " + j + " )   ";
+            }
+            Debug.Log(x);
+            x = "";
+        }
     }
     private void move(Building origin,Building goal)
     {
+        Debug.Log("move");
         int[,] mapOrigin = origin.potentialFieldMap;
         int[,] mapGoal = goal.potentialFieldMap;
         int goalx = 0;
@@ -124,13 +141,18 @@ public class Worker : MonoBehaviour
             }
         }
         Tuple<int, int> workerPos = new Tuple<int, int>(orix, oriy);
+
         Tuple<int, int> goalPos = new Tuple<int, int>(goalx, goaly);
-        while (workerPos != goalPos)
+
+        Debug.Log("goal: " + goalPos.Item1 + " " + goalPos.Item2 + " worker pos:  " + workerPos.Item1 + " " + workerPos.Item2);
+
+        while (workerPos.Item1 != goalPos.Item1 || workerPos.Item2 != goalPos.Item2)
         {
+            Debug.Log("true");
             workerPos = findBestNextStep(workerPos, mapGoal);
+            Debug.Log(workerPos.Item1+ " " + workerPos.Item2);
             physicalMove(workerPos);
         }
-        //TODO breitensuche um besten weg von orix und oriy zu goalx und goaly zu finden.
 
 
     }
@@ -220,6 +242,7 @@ public class Worker : MonoBehaviour
                 newWorkerPos = newWorkerPos2;
             }
         }
+        Debug.Log(lowestPot);
         return newWorkerPos;
     }
 

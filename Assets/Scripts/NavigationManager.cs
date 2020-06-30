@@ -37,7 +37,8 @@ public class NavigationManager : MonoBehaviour
                 }
             }
         }
-        usedPositions.Add(ourposx+""+ ourposy);
+        potentialFieldMap[ourposx, ourposy] = 0;
+        usedPositions.Add(ourposx+" "+ ourposy);
 
         potentialFieldMap = calculatePotentials(tileMap, ourposx, ourposy, potentialFieldMap, usedPositions);
         
