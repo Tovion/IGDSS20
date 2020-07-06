@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -290,7 +292,7 @@ public class GameManager : MonoBehaviour
     }
     public void calculatePotentialFields(Building building)
     {
-        building.potentialFieldMap = navman.calculatePotentialFields(building);
+        building.potentialFieldMap = navman.CalculatePotentialFields(building);
 
     }
     //Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
@@ -310,7 +312,7 @@ public class GameManager : MonoBehaviour
                 building.gameManager = this;
                 building.jobManager = jobManager;
                 PlaceBuilding(building, tile);
-                building.potentialFieldMap = navman.calculatePotentialFields(building);
+                building.potentialFieldMap = navman.CalculatePotentialFields(building);
                 Debug.Log("gamemanager calculated: " + building.potentialFieldMap.Length);
                 buildings.Add(building);
                 tile._building = building;
@@ -369,50 +371,36 @@ public class GameManager : MonoBehaviour
     private List<Tile> FindNeighborsOfTile(Tile t)
     {
         var result = new List<Tile>();
-        var limit = GetMapSize();
-        var rowIndex = t._coordinateWidth;
-        var colIndex = t._coordinateHeight;
 
-        if (rowIndex-1 > 0)
-        {
-            result.Add(_tileMap[rowIndex - 1, colIndex]);
-        }
-        if (rowIndex + 1 < limit)
-        {
-            result.Add(_tileMap[rowIndex + 1, colIndex]);
-        }
-        if (colIndex + 1 < limit)
-        {
-            result.Add(_tileMap[rowIndex, colIndex+1]);
-        }
-        if (colIndex - 1 > 0)
-        {
-            result.Add(_tileMap[rowIndex, colIndex-1]);
-        }
-        
-        if(IsEven(rowIndex))
-        {
-            if (rowIndex - 1 > 0 && colIndex - 1 > 0)
-            {
-                result.Add(_tileMap[rowIndex - 1, colIndex - 1]);
-            }
-            if (rowIndex + 1 < limit && colIndex - 1 > 0)
-            {
-                result.Add(_tileMap[rowIndex + 1, colIndex - 1]);
-            }
-        }
-        if (IsOdd(rowIndex))
-        {
-            if (rowIndex + 1 < limit && colIndex + 1 < limit)
-            {
-                result.Add(_tileMap[rowIndex + 1, colIndex + 1]);
-            }
+        var upLeft = new Tuple<int, int>(t._coordinateWidth - 1, t._coordinateHeight - 1);      //  (x-1, y-1)
+        var upRight = new Tuple<int, int>(t._coordinateWidth - 1, t._coordinateHeight);         //  (x-1, y  )
+        var left = new Tuple<int, int>(t._coordinateWidth, t._coordinateHeight - 1);            //  (x  , y-1)
+        var right = new Tuple<int, int>(t._coordinateWidth, t._coordinateHeight + 1);           //  (x  , y+1)
+        var bottomLeft = new Tuple<int, int>(t._coordinateWidth + 1, t._coordinateHeight - 1);  //  (x+1, y-1)
+        var bottomRight = new Tuple<int, int>(t._coordinateWidth + 1, t._coordinateHeight);     //  (x+1, y  )
 
-            if (rowIndex - 1 > 0 && colIndex + 1 < limit)
+        var neighborTileCoordinates = new List<Tuple<int, int>>
+        {
+            upLeft,
+            upRight,
+            left,
+            right,
+            bottomLeft,
+            bottomRight
+        };
+
+        foreach (var (x, y) in neighborTileCoordinates)
+        {
+            try
             {
-                result.Add(_tileMap[rowIndex - 1, colIndex + 1]);
+                result.Add(_tileMap[x, y]);
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                Debug.Log("Invalid index");
             }
         }
+
         return result;
     }
 

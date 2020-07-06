@@ -32,11 +32,11 @@ public class JobManager : MonoBehaviour
                 var randomJob = _availableJobs[randomIndex];
                 randomJob.AssignWorker(_unoccupiedWorkers[0]); //Also assigns worker to building
                 Building  b= randomJob._building;
-                //b.potentialFieldMap = navman.calculatePotentialFields(b);
+                //b.potentialFieldMap = navman.CalculatePotentialFields(b);
                 _unoccupiedWorkers[0].SetWorkplace(b);
                 /*
                 Building r = _unoccupiedWorkers[0]._residence;
-                r.potentialFieldMap = navman.calculatePotentialFields(r);
+                r.potentialFieldMap = navman.CalculatePotentialFields(r);
                 _unoccupiedWorkers[0].SetResidence(r);
                 */
                 _availableJobs.RemoveAt(randomIndex);

@@ -55,38 +55,36 @@ public class Worker : MonoBehaviour
         Age();
         ConsumeResources();
         CalculateHappiness();
-        moveWorker();
+        MoveWorker();
     }
-    void moveWorker()
+    private void MoveWorker()
     {
         if (_workplace != null)
         {
             if (_workplace.potentialFieldMap != null)
             {
-                
+                if (transform.position == _residence.transform.position) 
+                { 
+                    timer += Time.deltaTime; 
+                    if (timer > commuteInterval) 
+                    { 
+                        move(_residence, _workplace); 
+                        timer -= commuteInterval;
 
-                    if (transform.position == _residence.transform.position)
-                    {
-                        timer += Time.deltaTime;
-                        if (timer > commuteInterval)
-                        {
-                            move(_residence, _workplace);
-                            timer -= commuteInterval;
-                        }
                     }
-                    else
-                    {
-                        timer += Time.deltaTime;
-                        if (timer > commuteInterval)
-                        {
-                            move(_workplace, _residence);
-                            timer -= commuteInterval;
-                        }
+                }
+                else
+                { 
+                    timer += Time.deltaTime; 
+                    if (timer > commuteInterval) 
+                    { 
+                        move(_workplace, _residence); 
+                        timer -= commuteInterval;
+
                     }
-                
+                }
             }
         }
-
     }
     private void physicalMove(Tuple<int, int> workerPos)
     {
@@ -94,21 +92,7 @@ public class Worker : MonoBehaviour
         Tile tile = _tileMap[workerPos.Item1, workerPos.Item2];
         this.transform.position =new Vector3(tile.transform.position.x,tile.transform.position.y,tile.transform.position.z);
     }
-    private void DebugPrintPretty(int[,] potentialField, Tile[,] tileMap)
-    {
-        var len = _gameManager.GetMapSize();
-        var x = "";
 
-        for (var i = 0; i < len; i++)
-        {
-            for (var j = 0; j < len; j++)
-            {
-                x += "(" + tileMap[i, j]._type.ToString().Substring(0, 4) + " " + potentialField[i, j] + " i: " + i + " j: " + j + " )   ";
-            }
-            Debug.Log(x);
-            x = "";
-        }
-    }
     private void move(Building origin,Building goal)
     {
         Debug.Log("move");
