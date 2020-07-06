@@ -371,14 +371,30 @@ public class GameManager : MonoBehaviour
     private List<Tile> FindNeighborsOfTile(Tile t)
     {
         var result = new List<Tile>();
-
-        var upLeft = new Tuple<int, int>(t._coordinateWidth - 1, t._coordinateHeight - 1);      //  (x-1, y-1)
-        var upRight = new Tuple<int, int>(t._coordinateWidth - 1, t._coordinateHeight);         //  (x-1, y  )
-        var left = new Tuple<int, int>(t._coordinateWidth, t._coordinateHeight - 1);            //  (x  , y-1)
-        var right = new Tuple<int, int>(t._coordinateWidth, t._coordinateHeight + 1);           //  (x  , y+1)
-        var bottomLeft = new Tuple<int, int>(t._coordinateWidth + 1, t._coordinateHeight - 1);  //  (x+1, y-1)
-        var bottomRight = new Tuple<int, int>(t._coordinateWidth + 1, t._coordinateHeight);     //  (x+1, y  )
-
+        Tuple<int, int> upLeft;
+        Tuple<int, int> upRight;
+        Tuple<int, int> left;
+        Tuple<int, int> right;
+        Tuple<int, int> bottomLeft;
+        Tuple<int, int> bottomRight;
+        if (IsEven(t._coordinateWidth))
+        {
+             upLeft = new Tuple<int, int>(t._coordinateWidth - 1, t._coordinateHeight - 1);      //  (x-1, y-1)
+             upRight = new Tuple<int, int>(t._coordinateWidth - 1, t._coordinateHeight);         //  (x-1, y  )
+             left = new Tuple<int, int>(t._coordinateWidth, t._coordinateHeight - 1);            //  (x  , y-1)
+             right = new Tuple<int, int>(t._coordinateWidth, t._coordinateHeight + 1);           //  (x  , y+1)
+             bottomLeft = new Tuple<int, int>(t._coordinateWidth + 1, t._coordinateHeight - 1);  //  (x+1, y-1)
+             bottomRight = new Tuple<int, int>(t._coordinateWidth + 1, t._coordinateHeight);     //  (x+1, y  )
+        }
+        else
+        {
+             upLeft = new Tuple<int, int>(t._coordinateWidth +1 , t._coordinateHeight +1 );      //  (x+1, y+1)
+             upRight = new Tuple<int, int>(t._coordinateWidth - 1, t._coordinateHeight);         //  (x-1, y  )
+             left = new Tuple<int, int>(t._coordinateWidth, t._coordinateHeight - 1);            //  (x  , y-1)
+             right = new Tuple<int, int>(t._coordinateWidth, t._coordinateHeight + 1);           //  (x  , y+1)
+             bottomLeft = new Tuple<int, int>(t._coordinateWidth - 1, t._coordinateHeight + 1);  //  (x-1, y+1)
+             bottomRight = new Tuple<int, int>(t._coordinateWidth + 1, t._coordinateHeight);     //  (x+1, y  )
+        }
         var neighborTileCoordinates = new List<Tuple<int, int>>
         {
             upLeft,

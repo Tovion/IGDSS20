@@ -53,36 +53,115 @@ public class Tile : MonoBehaviour
             {
                 int x = neighborTile._coordinateWidth;
                 int y = neighborTile._coordinateHeight;
-                /*
-                if (x + 1 == _coordinateWidth && y + 1 == _coordinateHeight) // edge0 and edge3 are adjacent
+                if (IsEven(_coordinateWidth))
                 {
-                    neighborTile.edge0.SetActive(false);
-                    edge3.SetActive(false);
-                }
+                    if (x + 1 == _coordinateWidth && y + 1 == _coordinateHeight) // edge0 and edge3 are adjacent
+                    {
+                        //neighborTile.edge0.SetActive(false);
+                        edge3.SetActive(false);
+                    }
+                    if (x + 1 == _coordinateWidth && y == _coordinateHeight) // edge1 and edge4 are adjacent
+                    {
+                        //neighborTile.edge1.SetActive(false);
+                        edge4.SetActive(false);
+                    }
+                    if (x + 1 == _coordinateWidth && y - 1 == _coordinateHeight)
+                    {
+                        //neighborTile.edge1.SetActive(false);
+                        edge4.SetActive(false);
+                    }
 
-                if (x + 1 == _coordinateWidth && y == _coordinateHeight) // edge1 and edge4 are adjacent
-                {
-                    neighborTile.edge1.SetActive(false);
-                    edge4.SetActive(false);
-                }
 
-                if (x == _coordinateWidth && y + 1 == _coordinateHeight) // 
-                {
-                    neighborTile.edge5.SetActive(false);
-                    edge2.SetActive(false);
+                    if (x == _coordinateWidth && y + 1 == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge5.SetActive(false);
+                        edge2.SetActive(false);
+                    }
+                    if (x == _coordinateWidth && y - 1 == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge2.SetActive(false);
+                        edge5.SetActive(false);
+                    }
+
+
+                    if (x - 1 == _coordinateWidth && y + 1 == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge2.SetActive(false);
+                        edge1.SetActive(false);
+                    }
+                    if (x - 1 == _coordinateWidth && y == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge2.SetActive(false);
+                        edge0.SetActive(false);
+                    }
+                    if (x - 1 == _coordinateWidth && y - 1 == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge2.SetActive(false);
+                        edge0.SetActive(false);
+                    }
                 }
-                
-                if (x == _coordinateWidth && y - 1 == _coordinateHeight) // 
+                else
                 {
-                    neighborTile.edge2.SetActive(false);
-                    edge5.SetActive(false);
+                    if (x + 1 == _coordinateWidth && y + 1 == _coordinateHeight) // edge0 and edge3 are adjacent
+                    {
+                        //neighborTile.edge0.SetActive(false);
+                        edge3.SetActive(false);
+                    }
+                    if (x + 1 == _coordinateWidth && y == _coordinateHeight) // edge1 and edge4 are adjacent
+                    {
+                        //neighborTile.edge1.SetActive(false);
+                        edge3.SetActive(false);
+                    }
+                    if (x + 1 == _coordinateWidth && y - 1 == _coordinateHeight)
+                    {
+                        //neighborTile.edge1.SetActive(false);
+                        edge4.SetActive(false);
+                    }
+
+
+                    if (x == _coordinateWidth && y + 1 == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge5.SetActive(false);
+                        edge2.SetActive(false);
+                    }
+                    if (x == _coordinateWidth && y - 1 == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge2.SetActive(false);
+                        edge5.SetActive(false);
+                    }
+
+
+                    if (x - 1 == _coordinateWidth && y + 1 == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge2.SetActive(false);
+                        edge1.SetActive(false);
+                    }
+                    if (x - 1 == _coordinateWidth && y == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge2.SetActive(false);
+                        edge1.SetActive(false);
+                    }
+                    if (x - 1 == _coordinateWidth && y - 1 == _coordinateHeight) // 
+                    {
+                        //neighborTile.edge2.SetActive(false);
+                        edge0.SetActive(false);
+                    }
+
                 }
-                */
             }
 
 
 
 
         }
+    }
+    private bool IsEven(int number)
+    {
+        return number % 2 == 0;
+    }
+
+    private bool IsOdd(int number)
+    {
+        return number % 2 != 0;
     }
 }
