@@ -247,6 +247,10 @@ public class GameManager : MonoBehaviour
             _selectedBuildingPrefabIndex = 9;
         }
     }
+    public void UI_Button_Clicked(int buttonNumber)
+    {
+        _selectedBuildingPrefabIndex = buttonNumber;
+    }
 
     //Updates the visual representation of the resource dictionary in the inspector. Only for debugging
     private void UpdateInspectorNumbersForResources()
