@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -83,8 +84,15 @@ public class GameManager : MonoBehaviour
         potatoText.text = _ResourcesInWarehouse_Potato.ToString();
         schnappsText.text = _ResourcesInWarehouse_Schnapps.ToString();
         fishText.text = _ResourcesInWarehouse_Fish.ToString();
+        GameFinish();
     }
-
+    void GameFinish()
+    {
+        if(currentMoney >= 5200 || currentMoney > 1000000 || (jobManager._unoccupiedWorkers.Count + jobManager._occupiedWorkers.Count) > 1000)
+        {
+            SceneManager.LoadScene("GameOver");
+        }
+    }
     private void InitCamera()
     {
         Camera.main.transform.SetPositionAndRotation(
