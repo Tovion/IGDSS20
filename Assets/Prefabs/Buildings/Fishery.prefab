@@ -136,11 +136,12 @@ MonoBehaviour:
   outputCount: 1
   tile: {fileID: 0}
   canBeBuiltOnTileTypes: 02000000
-  efficiencyScalesWithNeighboringTiles: 
+  efficiencyScalesWithNeighboringTiles: 01000000
   minMaxNeighbors: 3
   inputResources: 
   outputResources: 1
   availableJobs: 25
+  wokerEfficiency: 0
 --- !u!1001 &2722606447649755996
 PrefabInstance:
   m_ObjectHideFlags: 0

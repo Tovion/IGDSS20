@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MouseManager : MonoBehaviour
 {
@@ -41,8 +42,8 @@ public class MouseManager : MonoBehaviour
             if (Physics.Raycast(ray, out var hit))
             {
                 GameObject gameObj = hit.collider.gameObject;
-                
-                if (gameObj.layer == TILE_LAYER)
+
+                if (!EventSystem.current.IsPointerOverGameObject() && gameObj.layer == TILE_LAYER)
                 {
                     Tile tile = gameObj.GetComponent<Tile>();
                     gameManager.TileClicked(tile._coordinateWidth, tile._coordinateHeight);

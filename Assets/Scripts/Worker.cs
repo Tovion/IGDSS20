@@ -55,7 +55,7 @@ public class Worker : MonoBehaviour
         Age();
         ConsumeResources();
         CalculateHappiness();
-        MoveWorker();
+        //MoveWorker();
     }
     private void MoveWorker()
     {
@@ -95,7 +95,7 @@ public class Worker : MonoBehaviour
 
     private void move(Building origin,Building goal)
     {
-        Debug.Log("move");
+        
         int[,] mapOrigin = origin.potentialFieldMap;
         int[,] mapGoal = goal.potentialFieldMap;
         int goalx = 0;
@@ -149,7 +149,7 @@ public class Worker : MonoBehaviour
         int lowestPot = 1000;
 
         Tuple<int, int> newWorkerPos = new Tuple<int, int>(x, y);
-        if (x < mapsize)
+        if (x < mapsize-1)
         {
             if(mapGoal[x+1,y] < lowestPot)
             {

@@ -8,7 +8,15 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public int currentMoney;
-
+    public UnityEngine.UI.Text moneyText;
+    public UnityEngine.UI.Text workerText;
+    public UnityEngine.UI.Text woodText;
+    public UnityEngine.UI.Text limberText;
+    public UnityEngine.UI.Text woolText;
+    public UnityEngine.UI.Text clothesText;
+    public UnityEngine.UI.Text potatoText;
+    public UnityEngine.UI.Text fishText;
+    public UnityEngine.UI.Text schnappsText;
     public JobManager jobManager;
     public NavigationManager navman;
     #region Enumerations
@@ -66,6 +74,15 @@ public class GameManager : MonoBehaviour
         HandleKeyboardInput();
         UpdateInspectorNumbersForResources();
         Upkeep();
+        moneyText.text =  currentMoney.ToString();
+        workerText.text = (jobManager._unoccupiedWorkers.Count +jobManager._occupiedWorkers.Count).ToString();
+        woodText.text = _ResourcesInWarehouse_Wood.ToString();
+        limberText.text = _ResourcesInWarehouse_Planks.ToString();
+        woolText.text = _ResourcesInWarehouse_Wool.ToString();
+        clothesText.text = _ResourcesInWarehouse_Clothes.ToString();
+        potatoText.text = _ResourcesInWarehouse_Potato.ToString();
+        schnappsText.text = _ResourcesInWarehouse_Schnapps.ToString();
+        fishText.text = _ResourcesInWarehouse_Fish.ToString();
     }
 
     private void InitCamera()
@@ -324,6 +341,7 @@ public class GameManager : MonoBehaviour
                 if (building.type != "Residence")
                 {
                     ProductionBuilding productionBuilding = (ProductionBuilding)building;
+
                     productionBuilding.CalculateOutputResource();
                 }
             }

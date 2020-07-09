@@ -51,12 +51,11 @@ public class ProductionBuilding : Building
         {
             averageHappiness = summedHappiness / _workers.Count;
         }
-     
         return wokerEfficiency * averageHappiness;
     }
     public float CalculateTileEfficiency()
     {
-        var tileEfficiencyValue = 1;
+        float tileEfficiencyValue = 1;
         var neighborTiles = tile._neighborTiles;
         var improvingNeighbors = 0;
 
@@ -67,13 +66,13 @@ public class ProductionBuilding : Building
                 improvingNeighbors++;
             }
         }
-
         if (efficiencyScalesWithNeighboringTiles.Count != 0)
         {
-            tileEfficiencyValue = improvingNeighbors / minMaxNeighbors;
+            
+            tileEfficiencyValue =(float)improvingNeighbors /(float) minMaxNeighbors;
+            Debug.Log(improvingNeighbors + " "+ tileEfficiencyValue);
         }
-      
-        return tileEfficiencyValue;
+        return 1;
     }
     public override void CalculateEfficiency()
     {
@@ -115,32 +114,33 @@ public class ProductionBuilding : Building
 
     public void CalculateOutputResource()
     {
-        switch(type){
-            case "Fishery":
-                outputResources = GameManager.ResourceTypes.Fish;
-                efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Water);
-                break;
-            case "Lumberjack":
-                outputResources = GameManager.ResourceTypes.Wood;
-                efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Forest);
-                break;
-            case "Sawmill":
-                outputResources = GameManager.ResourceTypes.Planks;
-                break;
-            case "Sheep Farm":
-                outputResources = GameManager.ResourceTypes.Wool;
-                efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Grass);
-                break;
-            case "Framework Knitters":
-                outputResources = GameManager.ResourceTypes.Clothes;
-                break;
-            case "Potato Farm":
-                outputResources = GameManager.ResourceTypes.Potato;
-                efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Grass);
-                break;
-            case "Schnapps Distillery":
-                outputResources = GameManager.ResourceTypes.Schnapps;
-                break;
-        }
+            switch (type)
+            {
+                case "Fishery":
+                    outputResources = GameManager.ResourceTypes.Fish;
+                    efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Water);
+                    break;
+                case "Lumberjack":
+                    outputResources = GameManager.ResourceTypes.Wood;
+                    efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Forest);
+                    break;
+                case "Sawmill":
+                    outputResources = GameManager.ResourceTypes.Planks;
+                    break;
+                case "Sheep Farm":
+                    outputResources = GameManager.ResourceTypes.Wool;
+                    efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Grass);
+                    break;
+                case "Framework Knitters":
+                    outputResources = GameManager.ResourceTypes.Clothes;
+                    break;
+                case "Potato Farm":
+                    outputResources = GameManager.ResourceTypes.Potato;
+                    efficiencyScalesWithNeighboringTiles.Add(Tile.TileTypes.Grass);
+                    break;
+                case "Schnapps Distillery":
+                    outputResources = GameManager.ResourceTypes.Schnapps;
+                    break;
+            }
     }
 }
